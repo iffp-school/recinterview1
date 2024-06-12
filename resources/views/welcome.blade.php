@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Laravel React</title>
-  @viteReactRefresh 
+  <title>RecInterview</title>
+  @viteReactRefresh
   @vite(['resources/css/app.css', 'resources/js/app.jsx'])
 </head>
 <body>

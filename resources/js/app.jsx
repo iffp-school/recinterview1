@@ -1,10 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import HelloReact from './components/HelloReact';
-import '../css/app.css'; // Import Tailwind CSS
+import App from './components/App';
+import '../css/app.css'; // Assurez-vous que ce fichier existe
 
 const container = document.getElementById('react-app');
 if (container) {
   const root = createRoot(container);
-  root.render(<HelloReact />);
+  root.render(<App />);
 }

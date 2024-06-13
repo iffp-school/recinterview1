@@ -10,9 +10,6 @@ import { Loader } from "lucide-react";
 import axios from "axios";
 import { axiosClient } from "../../api/axios.js";
 
-
-
-
 // Schéma de validation pour le formulaire 
 const formSchema = z.object({
   email: z.string().email().min(2).max(30), // Champ email avec validation
@@ -21,8 +18,6 @@ const formSchema = z.object({
 
 // Composant principal de la page de connexion
 export default function Login() {
-  // Utilisation du contexte utilisateur pour la connexion
-  // const {login, setAuthenticated, setToken} = useUserContext();
   const navigate = useNavigate(); // Hook de navigation
 
   // Initialisation du formulaire avec le résolveur Zod
@@ -38,29 +33,14 @@ export default function Login() {
   // Gestionnaire de soumission du formulaire
   const onSubmit = async values => {
     navigate(redirectToDashboard('recruteur'))
-    // const srcf = await axiosClient.get('/sanctum/csrf-cookie')
-    // console.log('srcf', srcf)
-    // const data = await axiosClient.post('/login', values)
-    //   .then((value) => {
-    //     // if(value.status == 204 ){
-    //     console.log('login success')
-    //     navigate(redirectToDashboard('recruteur'))
-    //     // }
-    //   }
-    //   ).catch((reason) => {
-    //     setError("email", {
-    //       message: reason.response.data.message
-    //     });
-    //   }
-    //   );
   };
 
   // Rendu du composant de formulaire de connexion
   return (
-    <div className="min-h-screen bg-gray-800 flex  items-center justify-center">
+    <div className="min-h-screen bg-gray-800 flex items-center justify-center px-4">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto mt-32 w-96 bg-gray-900 p-8 rounded-lg shadow-md"> {/* mx-auto pour centrer horizontalement */}
-          <h2 className="text-2xl text-white font-bold  text-center">Connexion</h2>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-md bg-gray-900 p-8 rounded-lg shadow-md">
+          <h2 className="text-2xl text-white font-bold text-center mb-6">Connexion</h2>
           {/* Champ email */}
           <FormField
             control={form.control}
@@ -90,7 +70,7 @@ export default function Login() {
             )}
           />
           {/* Bouton de soumission du formulaire */}
-          <Button className={' bg-blue-500 mt-4 w-full'} disabled={isSubmitting} type="submit">
+          <Button className={'bg-blue-500 mt-4 w-full'} disabled={isSubmitting} type="submit">
             {isSubmitting && <Loader className={'mx-2 my-2 animate-spin'} />} {' '} Login
           </Button>
         </form>

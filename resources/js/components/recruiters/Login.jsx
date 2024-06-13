@@ -1,25 +1,26 @@
-// Import des modules et des composants nécessaires
-import * as z from "zod"; // Import de Zod pour la validation des schémas
-import { useForm } from "react-hook-form"; // Hook pour gérer les formulaires dans React
-import { zodResolver } from "@hookform/resolvers/zod"; // Résolveur Zod pour React Hook Form
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form.jsx"; // Composants de formulaire personnalisés
-import { Input } from "../ui/input.jsx"; // Composant d'entrée de formulaire personnalisé
-import { Button } from "../ui/button.jsx"; // Composant de bouton personnalisé
-import { useNavigate } from "react-router-dom"; // Hook pour naviguer dans l'application React Router
-import { redirectToDashboard, } from "../../router/index.jsx"; // Routes de redirection
-import { Loader } from "lucide-react"; // Composant de chargeur
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../utils/form.jsx";
+import { Input } from "../utils/input.jsx";
+import { Button } from "../utils/button.jsx";
+import { useNavigate } from "react-router-dom";
+import { redirectToDashboard } from "../../router/index.jsx";
+import { Loader } from "lucide-react";
 import axios from "axios";
 import { axiosClient } from "../../api/axios.js";
-// import {useUserContext} from "../../context/UserContext.jsx"; // Contexte utilisateur
 
-// Schéma de validation pour le formulaire
+
+
+
+// Schéma de validation pour le formulaire 
 const formSchema = z.object({
   email: z.string().email().min(2).max(30), // Champ email avec validation
   password: z.string().min(8).max(30) // Champ mot de passe avec validation
 });
 
 // Composant principal de la page de connexion
-export default function SignIn() {
+export default function Login() {
   // Utilisation du contexte utilisateur pour la connexion
   // const {login, setAuthenticated, setToken} = useUserContext();
   const navigate = useNavigate(); // Hook de navigation

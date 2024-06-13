@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-// import image from 'images/image.png';
 
 function Home() {
     const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
@@ -10,7 +9,7 @@ function Home() {
     // Liste des phrases
     const phrases = [
         "Impressionnez plus de clients",
-        "Prenez moins de notes",
+        "Prenez moins de notes", 
         "Placez plus de candidats",
         "Gagnez plus d'affaires"
     ];
@@ -137,7 +136,6 @@ function Home() {
                         Une équipe qui comprend le recrutement. Notre équipe est assez unique. Nous gérons également Start In Recruitment et plaçons des commerciaux dans des agences de recrutement. Cela signifie que nous avons construit RecView pour nous-mêmes, en fonction des retours de nos clients - qui se trouvent être des recruteurs.
                     </p>
                     <img src="/images/image.png" alt="Votre image" className="w-1024 h-256" />
-
                 </div>
 
                 <footer className="text-center text-gray-400 text-sm py-4">

@@ -9,13 +9,13 @@ export default function SideBar() {
       </h1>
       <ul className="w-full">
         <li className="mb-2">
-          <Link to="/recruteur/dashboard" className="block w-full bg-blue-600 hover:bg-blue-500 py-2 px-4 rounded mb-1 text-center md:text-left">Dashboard</Link>
+          <Link to="/recruiter/dashboard" className="block w-full bg-blue-600 hover:bg-blue-500 py-2 px-4 rounded mb-1 text-center md:text-left">Dashboard</Link>
         </li>
         <li className="mb-2">
-          <Link to="/recruteur/posts" className="block w-full bg-blue-600 hover:bg-blue-500 py-2 px-4 rounded mb-1 text-center md:text-left">Posts</Link>
+          <Link to="/recruiter/posts" className="block w-full bg-blue-600 hover:bg-blue-500 py-2 px-4 rounded mb-1 text-center md:text-left">Posts</Link>
         </li>
         <li className="mb-2">
-          <Link to="/recruteur/candidats" className="block w-full bg-blue-600 hover:bg-blue-500 py-2 px-4 rounded mb-1 text-center md:text-left">Candidats</Link>
+          <Link to="/recruiter/candidates" className="block w-full bg-blue-600 hover:bg-blue-500 py-2 px-4 rounded mb-1 text-center md:text-left">Candidats</Link>
         </li>
       </ul>
     </div>

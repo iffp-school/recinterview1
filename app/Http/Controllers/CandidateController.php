@@ -1,46 +1,68 @@
 <?php
 
+// app/Http/Controllers/CandidateController.php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Candidate;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CandidateController extends Controller
 {
-    // Méthode pour créer un nouveau candidat
-    public function store(Request $request)
+    public function index()
     {
-        $candidate = Candidate::create([
-            'first_name' => $request->input('first_name'),
-            'last_name' => $request->input('last_name'),
-            'email' => $request->input('email'),
-            'user_id' => auth()->user()->id, // Récupère l'ID de l'utilisateur connecté
-        ]);
-
-        return response()->json($candidate, 201);
+        $candidatesWithVideos = Candidate::with('responses')->paginate(10);
+        return response()->json([
+            'candidates' => $candidatesWithVideos->items(),
+            'total' => $candidatesWithVideos->total()
+        ], 200);
     }
 
-    // Méthode pour afficher les informations d'un candidat spécifique
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'email' => 'required|email|unique:candidates',
+            'phone' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        return Candidate::create($request->all());
+    }
+
     public function show($id)
     {
         return Candidate::findOrFail($id);
     }
 
-    // Méthode pour mettre à jour les informations d'un candidat
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'string',
+            'last_name' => 'string',
+            'email' => 'email|unique:candidates,email,' . $id,
+            'phone' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
         $candidate = Candidate::findOrFail($id);
         $candidate->update($request->all());
-
-        return response()->json($candidate, 200);
+        return $candidate;
     }
 
-    // Méthode pour supprimer un candidat
     public function destroy($id)
     {
         $candidate = Candidate::findOrFail($id);
         $candidate->delete();
-
         return response()->json(null, 204);
     }
 }

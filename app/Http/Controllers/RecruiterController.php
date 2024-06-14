@@ -1,49 +1,37 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Recruiter;
+use Illuminate\Http\Request;
 
 class RecruiterController extends Controller
 {
     public function index()
     {
-        // Récupérer la liste des recruteurs
-        $recruiters = Recruiter::all();
-        return response()->json($recruiters);
+        return Recruiter::all();
     }
 
     public function store(Request $request)
     {
-        // Créer un nouveau recruteur
-        $recruiter = new Recruiter();
-        $recruiter->company_name = $request->input('company_name');
-        $recruiter->save();
-        return response()->json($recruiter);
+        $recruiter = Recruiter::create($request->all());
+        return response()->json($recruiter, 201);
     }
 
     public function show($id)
     {
-        // Récupérer les détails d'un recruteur spécifique
-        $recruiter = Recruiter::findOrFail($id);
-        return response()->json($recruiter);
+        return Recruiter::findOrFail($id);
     }
 
     public function update(Request $request, $id)
     {
-        // Mettre à jour les informations d'un recruteur
         $recruiter = Recruiter::findOrFail($id);
-        $recruiter->company_name = $request->input('company_name');
-        $recruiter->save();
-        return response()->json($recruiter);
+        $recruiter->update($request->all());
+        return response()->json($recruiter, 200);
     }
 
     public function destroy($id)
     {
-        // Supprimer un recruteur
-        $recruiter = Recruiter::findOrFail($id);
-        $recruiter->delete();
-        return response()->json(['message' => 'Recruiter deleted successfully']);
+        Recruiter::destroy($id);
+        return response()->json(null, 204);
     }
 }

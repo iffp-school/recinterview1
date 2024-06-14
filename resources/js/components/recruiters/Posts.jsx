@@ -4,17 +4,12 @@ import { BsPencilSquare, BsTrash, BsInfoCircleFill } from 'react-icons/bs';
 import { RiAddFill } from 'react-icons/ri';
 import Modal from 'react-modal';
 import SideBar from './SideBar';
-
-// Définir l'élément racine pour la modal
-Modal.setAppElement('#root');
-
-// Définir l'URL de base pour l'API
-const baseURL = 'http://localhost:8000/';
+import { axiosClient } from '../../api/axios';
 
 export default function Posts() {
-  // Variables d'état pour gérer les posts, le terme de recherche, la visibilité de la modal, les données du post actuel, et l'état de soumission
   const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPost, setCurrentPost] = useState({ title: '', description: '', questions: [''] });
@@ -23,40 +18,26 @@ export default function Posts() {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState(null);
 
-  // Utiliser useEffect pour récupérer les posts de l'API lors du chargement du composant
-  useEffect(() => {
-    axios.get(baseURL + 'api/posts')
+  const fetchPosts = (page, term = '') => {
+    axiosClient.get(`/posts?page=${page}&limit=10&search=${term}`)
       .then(response => {
-        setPosts(response.data);
-        setFilteredPosts(response.data);
+        setPosts(response.data.posts);
+        setTotalPages(Math.ceil(response.data.total / 10));
       })
       .catch(error => {
         console.error('Erreur lors de la récupération des posts : ', error);
       });
-  }, []);
+  };
 
-  // Gérer la recherche de posts par titre
+  useEffect(() => {
+    fetchPosts(currentPage, searchTerm);
+  }, [currentPage, searchTerm]);
+
   const handleSearch = (e) => {
-    const term = e.target.value.toLowerCase();
-    setSearchTerm(term);
-    setFilteredPosts(posts.filter(post =>
-      post.title.toLowerCase().includes(term)
-    ));
+    setSearchTerm(e.target.value.toLowerCase());
+    setCurrentPage(1); // Reset to first page when search term changes
   };
 
-  // Fonction pour ouvrir la modal de confirmation
-  const openConfirmationModal = (postId) => {
-    setPostIdToDelete(postId);
-    setShowConfirmationModal(true);
-  };
-
-  // Fonction pour fermer la modal de confirmation
-  const closeConfirmationModal = () => {
-    setShowConfirmationModal(false);
-    setPostIdToDelete(null);
-  };
-
-  // Gérer la soumission du formulaire pour ajouter un nouveau post
   const handleSubmit = () => {
     setIsSubmitting(true);
     const postData = {
@@ -66,10 +47,9 @@ export default function Posts() {
       recruiter_id: 1 // Remplacez ceci par l'ID réel du recruteur
     };
 
-    axios.post(`${baseURL}api/posts`, postData)
+    axiosClient.post('/posts', postData)
       .then(response => {
-        setPosts([...posts, response.data]);
-        setFilteredPosts([...filteredPosts, response.data]);
+        fetchPosts(currentPage);
         setIsSubmitting(false);
         setIsModalOpen(false);
         setCurrentPost({ title: '', description: '', questions: [''] });
@@ -80,7 +60,6 @@ export default function Posts() {
       });
   };
 
-  // Fonction pour éditer un post existant
   const handleEdit = () => {
     setIsSubmitting(true);
     const postData = {
@@ -90,16 +69,9 @@ export default function Posts() {
       recruiter_id: 1 // Remplacez ceci par l'ID réel du recruteur
     };
 
-    axios.put(`${baseURL}api/posts/${currentPost.id}`, postData)
+    axiosClient.put(`/posts/${currentPost.id}`, postData)
       .then(response => {
-        const updatedPosts = posts.map(post => {
-          if (post.id === currentPost.id) {
-            return response.data;
-          }
-          return post;
-        });
-        setPosts(updatedPosts);
-        setFilteredPosts(updatedPosts);
+        fetchPosts(currentPage);
         setIsSubmitting(false);
         setIsModalOpen(false);
         setCurrentPost({ title: '', description: '', questions: [''] });
@@ -110,18 +82,13 @@ export default function Posts() {
       });
   };
 
-  // Fonction pour supprimer un post
   const handleDelete = () => {
     setIsSubmitting(true);
 
-    axios.delete(`${baseURL}api/posts/${postIdToDelete}`)
+    axiosClient.delete(`/posts/${postIdToDelete}`)
       .then(() => {
-        const updatedPosts = posts.filter(post => post.id !== postIdToDelete);
-        setPosts(updatedPosts);
-        setFilteredPosts(updatedPosts);
+        fetchPosts(currentPage);
         setIsSubmitting(false);
-        setIsModalOpen(false);
-        setCurrentPost({ title: '', description: '', questions: [''] });
         setShowConfirmationModal(false);
         setPostIdToDelete(null);
       })
@@ -149,15 +116,12 @@ export default function Posts() {
     setShowDetailsModal(false);
   };
 
-  // Ajouter une nouvelle question au formulaire
   const addQuestion = () => {
     setCurrentPost({ ...currentPost, questions: [...currentPost.questions, ''] });
   };
 
-  // Gérer le changement de texte d'une question
   const handleQuestionChange = (index, value) => {
-    const newQuestions = currentPost.questions.map((q, i) => i ===
-      index ? value : q);
+    const newQuestions = currentPost.questions.map((q, i) => i === index ? value : q);
     setCurrentPost({ ...currentPost, questions: newQuestions });
   };
 
@@ -190,7 +154,7 @@ export default function Posts() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredPosts.map(post => (
+              {posts.map(post => (
                 <tr key={post.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-800">{post.title}</div>
@@ -215,7 +179,10 @@ export default function Posts() {
                     </button>
                     <button
                       className="text-red-600 hover:text-red-900 mr-2"
-                      onClick={() => openConfirmationModal(post.id)}
+                      onClick={() => {
+                        setPostIdToDelete(post.id);
+                        setShowConfirmationModal(true);
+                      }}
                     >
                       <BsTrash />
                     </button>
@@ -230,6 +197,19 @@ export default function Posts() {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="mt-4 flex justify-center">
+          <nav className="inline-flex">
+            {[...Array(totalPages)].map((_, page) => (
+              <button
+                key={page}
+                className={`px-4 py-2 mx-1 bg-blue-500 text-white rounded ${currentPage === page + 1 ? 'bg-blue-700' : ''}`}
+                onClick={() => setCurrentPage(page + 1)}
+              >
+                {page + 1}
+              </button>
+            ))}
+          </nav>
         </div>
       </div>
       <Modal
@@ -286,10 +266,9 @@ export default function Posts() {
           </div>
         </div>
       </Modal>
-      {/* Modal de confirmation */}
       <Modal
         isOpen={showConfirmationModal}
-        onRequestClose={closeConfirmationModal}
+        onRequestClose={() => setShowConfirmationModal(false)}
         className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75"
       >
         <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 lg:w-1/3 relative">
@@ -305,14 +284,13 @@ export default function Posts() {
             </button>
             <button
               className="bg-gray-600 text-white px-4 py-2 rounded-md"
-              onClick={closeConfirmationModal}
+              onClick={() => setShowConfirmationModal(false)}
             >
               Annuler
             </button>
           </div>
         </div>
       </Modal>
-      {/* Modal pour afficher les détails d'un poste */}
       <Modal
         isOpen={showDetailsModal}
         onRequestClose={handleCloseDetailsModal}

@@ -1,5 +1,7 @@
 <?php
 
+// app/Models/Candidate.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,10 +11,12 @@ class Candidate extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['first_name', 'last_name', 'email'];
+    protected $fillable = ['first_name', 'last_name', 'email', 'phone'];
 
-    public function user()
+    public function responses()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Response::class);
     }
+
+    // Si vous avez besoin de relations avec d'autres modèles, vous pouvez les définir ici
 }

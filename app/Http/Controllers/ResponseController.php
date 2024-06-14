@@ -3,56 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Response;
+use App\Models\Candidate;
 
 class ResponseController extends Controller
 {
-    public function index()
-    {
-        // Récupérer la liste de toutes les réponses
-        $responses = Response::all();
-        return response()->json($responses);
-    }
-
+    // Méthode pour stocker une nouvelle vidéo
     public function store(Request $request)
     {
-        // Créer une nouvelle réponse
-        $response = new Response();
-        $response->candidate_id = $request->input('candidate_id');
-        $response->video_url = $request->input('video_url');
-        $response->save();
-        return response()->json($response);
+        $videoUrl = $request->file('video')->store('public/videos');
+
+        $candidate = Candidate::find($request->input('candidate_id'));
+
+        $candidate->responses()->create([
+            'video_url' => $videoUrl
+        ]);
+
+        return response()->json(['message' => 'Video uploaded successfully'], 200);
     }
 
-    public function show($id)
+    public function index()
     {
-        // Récupérer une réponse par son ID
-        $response = Response::find($id);
-        if (!$response) {
-            return response()->json(['message' => 'Response not found'], 404);
-        }
-        return response()->json($response);
-    }
+        $videos = Candidate::with('responses')->get()->pluck('responses.*.video_url')->flatten()->toArray();
+        $totalVideos = count($videos);
 
-    public function update(Request $request, $id)
-    {
-        // Mettre à jour une réponse
-        $response = Response::find($id);
-        if (!$response) {
-            return response()->json(['message' => 'Response not found'], 404);
-        }
-        $response->update($request->all());
-        return response()->json($response);
-    }
-
-    public function destroy($id)
-    {
-        // Supprimer une réponse
-        $response = Response::find($id);
-        if (!$response) {
-            return response()->json(['message' => 'Response not found'], 404);
-        }
-        $response->delete();
-        return response()->json(['message' => 'Response deleted']);
+        return response()->json(['videos' => $videos, 'total' => $totalVideos], 200);
     }
 }

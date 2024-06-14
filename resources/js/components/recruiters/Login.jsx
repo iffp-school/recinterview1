@@ -32,7 +32,7 @@ export default function Login() {
 
   // Gestionnaire de soumission du formulaire
   const onSubmit = async values => {
-    navigate(redirectToDashboard('recruteur'))
+    navigate(redirectToDashboard('recruiter'))
   };
 
   // Rendu du composant de formulaire de connexion

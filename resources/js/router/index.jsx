@@ -5,7 +5,9 @@ import Login from "../components/recruiters/Login.jsx";
 import Dashboard from "../components/recruiters/Dashboard.jsx";
 import Posts from "../components/recruiters/Posts.jsx";
 import Candidates from "../components/recruiters/Candidates.jsx";
-
+import Profil from "../components/candidates/Profil.jsx";
+import DemarrageEntretien from "../components/candidates/DemarrageEntretien.jsx";
+import Enregistrement from "../components/candidates/Enregistrement.jsx";
 
 export const LOGIN_ROUTE = '/login'
 const ADMIN_BASE_ROUTE = '/admin'
@@ -28,7 +30,10 @@ export const router = createBrowserRouter([
       { path: '/login', element: <Login />},
       { path: RECRUTEUR_DASHBOARD_ROUTE, element: <Dashboard />},
       { path: RECRUTEUR_BASE_ROUTE+ '/posts', element: <Posts />},
-      { path: RECRUTEUR_BASE_ROUTE+ '/candidates', element: <Candidates />}
+      { path: RECRUTEUR_BASE_ROUTE+ '/candidates', element: <Candidates />},
+      { path: '/profil', element: <Profil />},
+      { path: '/demarrage-entretien', element: <DemarrageEntretien />},
+      { path: '/enregistrement', element: <Enregistrement />},
     ]
   }
 ])

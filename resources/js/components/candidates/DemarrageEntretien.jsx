@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 function DemarrageEntretien() {
     const navigate = useNavigate();
-
     const [accesWebcamAutorise, setAccesWebcamAutorise] = useState(false);
 
     const demarrerEnregistrement = () => {
@@ -19,12 +18,12 @@ function DemarrageEntretien() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-800 flex items-center justify-center">
-            <div className="max-w-md w-full bg-gray-800 text-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div className="min-h-screen bg-gray-800 flex items-center justify-center p-4">
+            <div className="max-w-md w-full bg-gray-900 text-white shadow-md rounded px-8 pt-6 pb-8">
                 <h2 className="text-2xl font-bold mb-4">Bienvenue dans notre processus d'entretien asynchrone</h2>
                 <p className="text-gray-300 text-base mb-4">
                     Prenez votre temps pour enregistrer vos réponses aux questions suivantes. Suivez les instructions fournies pour un enregistrement réussi.
-                    Vous trouverez une suite de questions suivie de vos réponses enregistrées. Les questions du recruteur sont  présentées sous forme de textes.
+                    Vous trouverez une suite de questions suivie de vos réponses enregistrées. Les questions du recruteur sont présentées sous forme de textes.
                     Après avoir enregistré une réponse, vous aurez la possibilité de la réenregistrer si nécessaire avant de la soumettre.
                 </p>
                 <button

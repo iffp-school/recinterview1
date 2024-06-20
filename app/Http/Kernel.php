@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use \Illuminate\Http\Middleware\HandleCors;
 
 class Kernel extends HttpKernel
 {
@@ -14,8 +15,11 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        // Middleware pour gérer les erreurs de l'application
+        // Other middleware
+        \App\Http\Middleware\CorsMiddleware::class,
+        \Illuminate\Http\Middleware\HandleCors::class,
     ];
+    
 
     /**
      * Les groupes de middleware HTTP de l'application.
@@ -27,7 +31,10 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewareGroups = [
-        'web' => [],
+        'web' => [
+            \Illuminate\Http\Middleware\HandleCors::class,
+            \App\Http\Middleware\CorsMiddleware::class,
+        ],
 
         'api' => [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,

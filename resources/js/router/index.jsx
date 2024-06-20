@@ -6,7 +6,6 @@ import Dashboard from "../components/recruiters/Dashboard.jsx";
 import Posts from "../components/recruiters/Posts.jsx";
 import Candidates from "../components/recruiters/Candidates.jsx";
 import Profil from "../components/candidates/Profil.jsx";
-import DemarrageEntretien from "../components/candidates/DemarrageEntretien.jsx";
 import Enregistrement from "../components/candidates/Enregistrement.jsx";
 
 export const LOGIN_ROUTE = '/login'
@@ -32,7 +31,6 @@ export const router = createBrowserRouter([
       { path: RECRUTEUR_BASE_ROUTE+ '/posts', element: <Posts />},
       { path: RECRUTEUR_BASE_ROUTE+ '/candidates', element: <Candidates />},
       { path: '/profil', element: <Profil />},
-      { path: '/demarrage-entretien', element: <DemarrageEntretien />},
       { path: '/enregistrement', element: <Enregistrement />},
     ]
   }

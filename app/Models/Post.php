@@ -24,4 +24,9 @@ class Post extends Model
     {
         return $this->hasMany(Question::class);
     }
+
+    public function candidates()
+    {
+        return $this->hasMany(Candidate::class);
+    }
 }

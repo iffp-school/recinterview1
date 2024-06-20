@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from 'react-redux';
-import { setPosts, selectPost } from '../../redux/slices/postSlice';
+import { setPosts } from '../../redux/slices/postSlice';
+import { axiosClient } from '../../api/axios';
+import Modal from 'react-modal';
 
 const formSchema = z.object({
     first_name: z.string().nonempty("Prénom requis"),
@@ -17,113 +19,51 @@ const formSchema = z.object({
 function Profil() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [posts, setPostsState] = useState([]);
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(formSchema)
     });
 
-    const posts = [
-        {
-            "id": 22,
-            "recruiter_id": 1,
-            "title": "Développeur Full Stack",
-            "description": "Nous recherchons un développeur Full Stack expérimenté pour rejoindre notre équipe dynamique. Le candidat idéal possède des compétences dans les technologies front-end et back-end, ainsi qu'une solide expérience en développement web.",
-            "created_at": "2024-06-10T05:55:37.000000Z",
-            "updated_at": "2024-06-10T05:55:37.000000Z",
-            "questions": [
-                {
-                    "id": 30,
-                    "post_id": 22,
-                    "question_text": "Quelle est votre expérience en développement web ?",
-                    "created_at": "2024-06-10T03:55:37.000000Z",
-                    "updated_at": "2024-06-10T03:55:37.000000Z"
-                },
-                {
-                    "id": 31,
-                    "post_id": 22,
-                    "question_text": "Pouvez-vous citer quelques projets web auxquels vous avez contribué ?",
-                    "created_at": "2024-06-10T03:55:37.000000Z",
-                    "updated_at": "2024-06-10T03:55:37.000000Z"
-                },
-                {
-                    "id": 32,
-                    "post_id": 22,
-                    "question_text": "Quels sont les langages de programmation que vous maîtrisez pour le développement back-end ?",
-                    "created_at": "2024-06-10T03:55:37.000000Z",
-                    "updated_at": "2024-06-10T03:55:37.000000Z"
-                }
-            ]
-        },
-        {
-            "id": 23,
-            "recruiter_id": 2,
-            "title": "Chef de Projet IT",
-            "description": "Nous recherchons un chef de projet IT expérimenté pour gérer et coordonner nos projets informatiques. Le candidat idéal aura une solide expérience en gestion de projet et une connaissance approfondie des technologies informatiques.",
-            "created_at": "2024-06-12T08:20:37.000000Z",
-            "updated_at": "2024-06-12T08:20:37.000000Z",
-            "questions": [
-                {
-                    "id": 33,
-                    "post_id": 23,
-                    "question_text": "Quelle est votre expérience en gestion de projet IT ?",
-                    "created_at": "2024-06-12T03:20:37.000000Z",
-                    "updated_at": "2024-06-12T03:20:37.000000Z"
-                },
-                {
-                    "id": 34,
-                    "post_id": 23,
-                    "question_text": "Pouvez-vous décrire un projet IT que vous avez géré de bout en bout ?",
-                    "created_at": "2024-06-12T03:20:37.000000Z",
-                    "updated_at": "2024-06-12T03:20:37.000000Z"
-                },
-                {
-                    "id": 35,
-                    "post_id": 23,
-                    "question_text": "Quels outils de gestion de projet utilisez-vous ?",
-                    "created_at": "2024-06-12T03:20:37.000000Z",
-                    "updated_at": "2024-06-12T03:20:37.000000Z"
-                }
-            ]
-        },
-        {
-            "id": 24,
-            "recruiter_id": 3,
-            "title": "Analyste Sécurité",
-            "description": "Nous cherchons un analyste en sécurité informatique pour rejoindre notre équipe. Le candidat idéal aura une expertise en sécurité des systèmes d'information et une expérience pratique en matière de cybersécurité.",
-            "created_at": "2024-06-15T10:15:37.000000Z",
-            "updated_at": "2024-06-15T10:15:37.000000Z",
-            "questions": [
-                {
-                    "id": 36,
-                    "post_id": 24,
-                    "question_text": "Quelle est votre expérience en matière de cybersécurité ?",
-                    "created_at": "2024-06-15T04:15:37.000000Z",
-                    "updated_at": "2024-06-15T04:15:37.000000Z"
-                },
-                {
-                    "id": 37,
-                    "post_id": 24,
-                    "question_text": "Pouvez-vous décrire une attaque de sécurité que vous avez aidé à prévenir ou à résoudre ?",
-                    "created_at": "2024-06-15T04:15:37.000000Z",
-                    "updated_at": "2024-06-15T04:15:37.000000Z"
-                },
-                {
-                    "id": 38,
-                    "post_id": 24,
-                    "question_text": "Quels outils et technologies de sécurité utilisez-vous ?",
-                    "created_at": "2024-06-15T04:15:37.000000Z",
-                    "updated_at": "2024-06-15T04:15:37.000000Z"
-                }
-            ]
-        }
-    ];
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    React.useEffect(() => {
-        dispatch(setPosts(posts));
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const response = await axiosClient.get('/posts');
+                if (response.data && Array.isArray(response.data.posts)) {
+                    const postsData = response.data.posts.map(post => ({
+                        id: post.id,
+                        recruiter_id: post.recruiter_id,
+                        title: post.title,
+                        description: post.description,
+                        questions: post.questions.map(question => ({
+                            id: question.id,
+                            post_id: question.post_id,
+                            question_text: question.question_text,
+                        }))
+                    }));
+                    setPostsState(postsData);
+                    dispatch(setPosts(postsData));
+                }
+            } catch (error) {
+                console.error("Erreur lors de la récupération des postes:", error);
+            }
+        };
+
+        fetchPosts();
     }, [dispatch]);
 
-    const onSubmit = (data) => {
-        dispatch(selectPost(data.post_id));
-        navigate('/demarrage-entretien');
+    const onSubmit = async (data) => {
+        try {
+            await axiosClient.post('/candidates', data);
+            openModal();
+            navigate('/enregistrement', { state: { email: data.email, selectedPostId: data.post_id } });
+        } catch (error) {
+            console.error("Erreur lors de la soumission des données du candidat:", error);
+        }
     };
 
     return (
@@ -161,6 +101,32 @@ function Profil() {
                     </button>
                 </form>
             </div>
+
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={closeModal}
+                className="fixed inset-0 flex items-center justify-center z-50"
+                overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+                contentLabel="Demarrage Entretien"
+                closeTimeoutMS={300}
+                ariaHideApp={false}
+            >
+                <div className="bg-white rounded-lg p-8 shadow-lg max-w-md w-full transform transition-transform duration-300 ease-in-out translate-y-0">
+                    <h2 className="text-2xl font-bold mb-4">Profil Enregistré</h2>
+                    <p className="mb-4 text-gray-700">
+                        Votre profil a été enregistré avec succès. Bienvenue dans notre processus d'entretien asynchrone.
+                        Prenez votre temps pour enregistrer vos réponses aux questions suivantes. Suivez les instructions fournies pour un enregistrement réussi.
+                        Vous trouverez une suite de questions suivie de vos réponses enregistrées. Les questions du recruteur sont présentées sous forme de textes.
+                        Après avoir enregistré une réponse, vous aurez la possibilité de la réenregistrer si nécessaire avant de la soumettre.
+                    </p>
+                    <button
+                        className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={() => navigate('/enregistrement', { state: { email: data.email, selectedPostId: data.post_id } })}
+                    >
+                        Démarrer l'enregistrement
+                    </button>
+                </div>
+            </Modal>
         </div>
     );
 }

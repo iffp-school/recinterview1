@@ -11,12 +11,21 @@ class Candidate extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['first_name', 'last_name', 'email', 'phone'];
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
+        'cv',
+        'post_id'
+    ];
 
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
+    }
     public function responses()
     {
         return $this->hasMany(Response::class);
     }
-
-    // Si vous avez besoin de relations avec d'autres modèles, vous pouvez les définir ici
 }

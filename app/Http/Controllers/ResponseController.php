@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Response;
 use App\Models\Candidate;
 
 class ResponseController extends Controller
@@ -10,15 +11,22 @@ class ResponseController extends Controller
     // Méthode pour stocker une nouvelle vidéo
     public function store(Request $request)
     {
-        $videoUrl = $request->file('video')->store('public/videos');
-
-        $candidate = Candidate::find($request->input('candidate_id'));
-
-        $candidate->responses()->create([
-            'video_url' => $videoUrl
+        $request->validate([
+            'candidate_id' => 'required|exists:candidates,id',
+            'video' => 'required|file|mimes:mp4,mov,mkv,ogg,qt|max:20000' 
         ]);
 
-        return response()->json(['message' => 'Video uploaded successfully'], 200);
+        $videoPath = $request->file('video')->store('public/videos');
+        $videoUrl = str_replace('public/', '', $videoPath);
+
+        $response = new Response([
+            'candidate_id' => $request->input('candidate_id'),
+            'video_url' => $videoUrl,
+        ]);
+
+        $response->save();
+
+        return response()->json(['message' => 'Video uploaded successfully', 'video_url' => $videoUrl], 200);
     }
 
     public function index()

@@ -1,7 +1,5 @@
 <?php
 
-// app/Http/Controllers/CandidateController.php
-
 namespace App\Http\Controllers;
 
 use App\Models\Candidate;
@@ -12,13 +10,12 @@ class CandidateController extends Controller
 {
     public function index()
     {
-        $candidatesWithVideos = Candidate::with('responses')->paginate(10);
+        $candidatesWithDetails = Candidate::with(['post.questions', 'responses'])->paginate(10);
         return response()->json([
-            'candidates' => $candidatesWithVideos->items(),
-            'total' => $candidatesWithVideos->total()
+            'candidates' => $candidatesWithDetails->items(),
+            'total' => $candidatesWithDetails->total()
         ], 200);
     }
-
 
     public function store(Request $request)
     {
@@ -26,14 +23,16 @@ class CandidateController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required|email|unique:candidates',
-            'phone' => 'nullable|string'
+            'phone' => 'nullable|string',
+            'post_id' => 'required|exists:posts,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        return Candidate::create($request->all());
+        $candidate = Candidate::create($request->all());
+        return response()->json($candidate, 201);
     }
 
     public function show($id)
@@ -47,7 +46,8 @@ class CandidateController extends Controller
             'first_name' => 'string',
             'last_name' => 'string',
             'email' => 'email|unique:candidates,email,' . $id,
-            'phone' => 'nullable|string'
+            'phone' => 'nullable|string',
+            'post_id' => 'exists:posts,id' // Validation de l'ID du poste lors de la mise à jour
         ]);
 
         if ($validator->fails()) {
@@ -56,7 +56,7 @@ class CandidateController extends Controller
 
         $candidate = Candidate::findOrFail($id);
         $candidate->update($request->all());
-        return $candidate;
+        return response()->json($candidate, 200);
     }
 
     public function destroy($id)
@@ -64,5 +64,15 @@ class CandidateController extends Controller
         $candidate = Candidate::findOrFail($id);
         $candidate->delete();
         return response()->json(null, 204);
+    }
+
+    public function getCandidateByEmail($email)
+    {
+        $candidate = Candidate::where('email', $email)->first();
+        if ($candidate) {
+            return response()->json($candidate, 200);
+        } else {
+            return response()->json(['message' => 'No candidate found for this email'], 404);
+        }
     }
 }

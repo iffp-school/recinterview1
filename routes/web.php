@@ -17,6 +17,9 @@ Route::post('/candidates', [CandidateController::class, 'store']);
 Route::get('/candidates/{id}', [CandidateController::class, 'show']);
 Route::put('/candidates/{id}', [CandidateController::class, 'update']);
 Route::delete('/candidates/{id}', [CandidateController::class, 'destroy']);
+Route::get('/candidates/email/{email}', [CandidateController::class, 'getCandidateByEmail']);
+
+
 
 Route::get('/responses', [ResponseController::class, 'index']);
 Route::post('/responses', [ResponseController::class, 'store']);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import SideBar from './SideBar';
+import NavBar from './NavBar';
 import { axiosClient } from '../../api/axios';
 import { FaTrash, FaVideo } from 'react-icons/fa';
 import ReactPlayer from 'react-player';
@@ -69,94 +70,96 @@ export default function Candidates() {
     };
 
     return (
-        <div className="flex flex-col md:flex-row h-screen bg-gray-800">
+        <div className="flex flex-col md:flex-row h-screen bg-gray-800 text-white">
             <SideBar />
-            <div className="w-full md:w-3/4 p-4">
-                <div className="flex flex-col md:flex-row items-center justify-between mb-4">
-                    <input
-                        type="text"
-                        className="border border-gray-300 rounded px-4 py-2 w-full md:w-64  mb-2 md:mb-0"
-                        placeholder="nom, email ou poste"
-                        value={recherche}
-                        onChange={handleSearch}
-                    />
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-blue-700">
-                            <tr>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Nom
-                                </th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Email
-                                </th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Téléphone
-                                </th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Poste
-                                </th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Réponses
-                                </th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {candidates.map((candidate, index) => (
-                                <tr key={index} className={index % 2 === 0 ? 'bg-blue-100' : 'bg-blue-50'}>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-medium text-gray-800">{candidate.first_name} {candidate.last_name}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-medium text-gray-800">{candidate.email}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-medium text-gray-800">{candidate.phone}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-medium text-gray-800">{candidate.post.title}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="flex flex-wrap gap-2">
-                                            {candidate.responses.map((response, index) => {
-                                                const question = candidate.post.questions[index];
-                                                return (
-                                                    <div key={index} className="cursor-pointer" onClick={() => handleVideoClick(response.video_url, question)}>
-                                                        <FaVideo className="text-blue-500 text-2xl" />
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <button onClick={() => openConfirmModal(candidate.id)} className="text-red-500 hover:text-red-700">
-                                            <FaTrash size={18} />
-                                        </button>
-                                    </td>
+            <div className="w-full">
+                <NavBar />
+                <div className="p-4">
+                    <div className="flex flex-col md:flex-row items-center justify-between mb-4">
+                        <input
+                            type="text"
+                            className="border border-gray-300 rounded px-4 py-2 w-full md:w-64 bg-white mb-2 md:mb-0"
+                            placeholder="Nom, Email, Poste"
+                            value={recherche}
+                            onChange={handleSearch}
+                        />
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-blue-700">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Nom
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Email
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Téléphone
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Poste
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Réponses
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Actions
+                                    </th>
                                 </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {candidates.map((candidate, index) => (
+                                    <tr key={index} className={index % 2 === 0 ? 'bg-blue-100' : 'bg-blue-50'}>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-800">{candidate.first_name} {candidate.last_name}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-800">{candidate.email}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-800">{candidate.phone}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-800">{candidate.post.title}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex flex-wrap gap-2">
+                                                {candidate.responses.map((response, index) => {
+                                                    const question = candidate.post.questions[index];
+                                                    return (
+                                                        <div key={index} className="cursor-pointer" onClick={() => handleVideoClick(response.video_url, question)}>
+                                                            <FaVideo className="text-blue-500 text-2xl" />
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <button onClick={() => openConfirmModal(candidate.id)} className="text-red-500 hover:text-red-700">
+                                                <FaTrash size={18} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="mt-4 flex justify-center">
+                        <nav className="inline-flex">
+                            {[...Array(totalPages)].map((_, page) => (
+                                <button
+                                    key={page}
+                                    className={`px-4 py-2 mx-1 bg-blue-500 text-white rounded ${currentPage === page + 1 ? 'bg-blue-700' : ''}`}
+                                    onClick={() => handlePageChange(page + 1)}
+                                >
+                                    {page + 1}
+                                </button>
                             ))}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="mt-4 flex justify-center">
-                    <nav className="inline-flex">
-                        {[...Array(totalPages)].map((_, page) => (
-                            <button
-                                key={page}
-                                className={`px-4 py-2 mx-1 bg-blue-500 text-white rounded ${currentPage === page + 1 ? 'bg-blue-700' : ''}`}
-                                onClick={() => handlePageChange(page + 1)}
-                            >
-                                {page + 1}
-                            </button>
-                        ))}
-                    </nav>
+                        </nav>
+                    </div>
                 </div>
             </div>
-
             <Modal
                 isOpen={isModalOpen}
                 onRequestClose={() => setIsModalOpen(false)}
@@ -173,7 +176,6 @@ export default function Candidates() {
                     <ReactPlayer url={currentVideoUrl} width="100%" height="100%" controls />
                 </div>
             </Modal>
-
             <Modal
                 isOpen={isConfirmModalOpen}
                 onRequestClose={closeConfirmModal}

@@ -3,6 +3,7 @@ import { BsPencilSquare, BsTrash, BsInfoCircleFill, BsX } from 'react-icons/bs';
 import { RiAddFill } from 'react-icons/ri';
 import Modal from 'react-modal';
 import SideBar from './SideBar';
+import NavBar from './NavBar';
 import { axiosClient } from '../../api/axios';
 
 export default function Posts() {
@@ -132,96 +133,99 @@ export default function Posts() {
   return (
     <div className="flex flex-col md:flex-row h-screen bg-gray-800 text-white">
       <SideBar />
-      <div className="w-full md:w-3/4 p-4">
-        <div className="flex items-center mb-4">
-          <input
-            type="text"
-            className="border border-gray-800 text-black rounded px-4 py-2 w-full md:w-64 bg-white mb-2 md:mb-0"
-            placeholder="Rechercher par titre"
-            value={searchTerm}
-            onChange={handleSearch}
-          />
-          <button
-            className="bg-blue-600 text-white px-4 py-2 rounded-md ml-2"
-            onClick={() => setIsModalOpen(true)}
-          >
-            <RiAddFill className="mr-1 " />
-          </button>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-blue-700">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Titre</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Date de création</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {posts.map(post => (
-                <tr key={post.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-800">{post.title}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-800">
-                      {new Date(post.created_at).toLocaleDateString("fr-FR", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </div></td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      className="text-blue-600 hover:text-blue-900 mr-2"
-                      onClick={() => {
-                        setCurrentPost(post);
-                        setIsModalOpen(true);
-                      }}
-                    >
-                      <BsPencilSquare />
-                    </button>
-                    <button
-                      className="text-red-600 hover:text-red-900 mr-2"
-                      onClick={() => {
-                        setPostIdToDelete(post.id);
-                        setShowConfirmationModal(true);
-                      }}
-                    >
-                      <BsTrash />
-                    </button>
-                    <button
-                      className="text-green-600 hover:text-green-900 mr-2"
-                      onClick={() => handleDetails(post)}
-                    >
-                      <BsInfoCircleFill />
-                    </button>
-                  </td>
+      <div className="w-full">
+        <NavBar />
+        <div className="p-4">
+          <div className="flex items-center mb-4">
+            <input
+              type="text"
+              className="border border-gray-800 text-black rounded px-4 py-2 w-full md:w-64 bg-white mb-2 md:mb-0"
+              placeholder="Rechercher par titre"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+            <button
+              className="bg-blue-600 text-white px-4 py-2 rounded-md ml-2"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <RiAddFill className="mr-1 " />
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-blue-700">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Titre</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Date de création</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
                 </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {posts.map(post => (
+                  <tr key={post.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-800">{post.title}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-800">
+                        {new Date(post.created_at).toLocaleDateString("fr-FR", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </div></td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        className="text-blue-600 hover:text-blue-900 mr-2"
+                        onClick={() => {
+                          setCurrentPost(post);
+                          setIsModalOpen(true);
+                        }}
+                      >
+                        <BsPencilSquare />
+                      </button>
+                      <button
+                        className="text-red-600 hover:text-red-900 mr-2"
+                        onClick={() => {
+                          setPostIdToDelete(post.id);
+                          setShowConfirmationModal(true);
+                        }}
+                      >
+                        <BsTrash />
+                      </button>
+                      <button
+                        className="text-green-600 hover:text-green-900 mr-2"
+                        onClick={() => handleDetails(post)}
+                      >
+                        <BsInfoCircleFill />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-4 flex justify-center">
+            <nav className="inline-flex">
+              {[...Array(totalPages)].map((_, page) => (
+                <button
+                  key={page}
+                  className={`px-4 py-2 mx-1 bg-blue-500 text-white rounded ${currentPage === page + 1 ? 'bg-blue-700' : ''}`}
+                  onClick={() => setCurrentPage(page + 1)}
+                >
+                  {page + 1}
+                </button>
               ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="mt-4 flex justify-center">
-          <nav className="inline-flex">
-            {[...Array(totalPages)].map((_, page) => (
-              <button
-                key={page}
-                className={`px-4 py-2 mx-1 bg-blue-500 text-white rounded ${currentPage === page + 1 ? 'bg-blue-700' : ''}`}
-                onClick={() => setCurrentPage(page + 1)}
-              >
-                {page + 1}
-              </button>
-            ))}
-          </nav>
+            </nav>
+          </div>
         </div>
       </div>
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
-        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 overflow-y-auto"
+        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75"
       >
-        <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 lg:w-1/3 relative max-h-screen overflow-y-auto">
+        <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 lg:w-1/3 relative overflow-y-auto max-h-full">
           <button
             onClick={() => setIsModalOpen(false)}
             className="absolute top-0 right-0 m-2 text-black text-2xl font-bold"
@@ -264,7 +268,6 @@ export default function Posts() {
                   placeholder="Temps de préparation (minutes)"
                   className="border border-gray-300 rounded px-4 py-2 mb-2 w-1/2"
                   value={question.preparation_time}
-                  min="0"
                   onChange={(e) => handleQuestionChange(index, 'preparation_time', e.target.value)}
                 />
                 <input
@@ -272,7 +275,6 @@ export default function Posts() {
                   placeholder="Temps de réponse (minutes)"
                   className="border border-gray-300 rounded px-4 py-2 mb-2 w-1/2"
                   value={question.response_time}
-                  min="0"
                   onChange={(e) => handleQuestionChange(index, 'response_time', e.target.value)}
                 />
               </div>
@@ -323,9 +325,9 @@ export default function Posts() {
       <Modal
         isOpen={showDetailsModal}
         onRequestClose={handleCloseDetailsModal}
-        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 overflow-y-auto"
+        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75"
       >
-        <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 lg:w-1/3 relative max-h-screen overflow-y-auto">
+        <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 lg:w-1/3 relative">
           <button
             onClick={handleCloseDetailsModal}
             className="absolute top-0 right-0 m-2 text-black text-2xl font-bold"
@@ -341,12 +343,12 @@ export default function Posts() {
           <h3 className="text-lg font-semibold mb-2">Description</h3>
           <p className="text-gray-800 mb-4">{currentPost.description}</p>
           <h3 className="text-lg font-semibold mb-2">Questions</h3>
-          <ul className="list-disc pl-5">
+          <ul>
             {currentPost.questions && currentPost.questions.map((question, index) => (
               <li key={index} className="text-gray-800 mb-2">
-                <strong>Question {index + 1}:</strong> {question.question_text} <br />
-                <strong>Temps de préparation:</strong> {question.preparation_time} minutes <br />
-                <strong>Temps de réponse:</strong> {question.response_time} minutes
+                Question {index + 1}: {question.question_text} <br />
+                Temps de préparation: {question.preparation_time} minutes <br />
+                Temps de réponse: {question.response_time} minutes
               </li>
             ))}
           </ul>

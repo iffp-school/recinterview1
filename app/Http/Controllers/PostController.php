@@ -8,9 +8,16 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::with('questions')->paginate(10);
+        $query = Post::with('questions');
+
+        if ($request->has('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        $posts = $query->paginate(10);
+
         return response()->json([
             'posts' => $posts->items(),
             'total' => $posts->total()
@@ -23,9 +30,11 @@ class PostController extends Controller
         $post = Post::create($request->only(['title', 'description', 'recruiter_id']));
 
         if ($request->has('questions')) {
-            foreach ($request->questions as $questionText) {
+            foreach ($request->questions as $questionData) {
                 $question = new Question([
-                    'question_text' => $questionText,
+                    'question_text' => $questionData['question_text'],
+                    'preparation_time' => $questionData['preparation_time'],
+                    'response_time' => $questionData['response_time'],
                     'post_id' => $post->id
                 ]);
                 $question->save();
@@ -43,7 +52,19 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $post = Post::findOrFail($id);
-        $post->update($request->all());
+        $post->update($request->only(['title', 'description', 'recruiter_id']));
+
+        if ($request->has('questions')) {
+            foreach ($request->questions as $questionData) {
+                $question = Question::findOrFail($questionData['id']);
+                $question->update([
+                    'question_text' => $questionData['question_text'],
+                    'preparation_time' => $questionData['preparation_time'],
+                    'response_time' => $questionData['response_time'],
+                ]);
+            }
+        }
+
         return response()->json($post, 200);
     }
 
@@ -55,9 +76,17 @@ class PostController extends Controller
 
     public function attachQuestion(Request $request, $id)
     {
+        $request->validate([
+            'question_text' => 'required|string',
+            'preparation_time' => 'nullable|integer',
+            'response_time' => 'nullable|integer',
+        ]);
+
         $post = Post::findOrFail($id);
         $question = new Question([
             'question_text' => $request->question_text,
+            'preparation_time' => $request->preparation_time,
+            'response_time' => $request->response_time,
             'post_id' => $post->id
         ]);
         $question->save();

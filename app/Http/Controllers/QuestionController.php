@@ -13,6 +13,13 @@ class QuestionController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'question_text' => 'required|string',
+            'post_id' => 'required|exists:posts,id',
+            'preparation_time' => 'nullable|integer',
+            'response_time' => 'nullable|integer',
+        ]);
+
         $question = Question::create($request->all());
         return response()->json($question, 201);
     }
@@ -24,6 +31,12 @@ class QuestionController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'question_text' => 'required|string',
+            'preparation_time' => 'nullable|integer',
+            'response_time' => 'nullable|integer',
+        ]);
+
         $question = Question::findOrFail($id);
         $question->update($request->all());
         return response()->json($question, 200);

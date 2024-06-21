@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { BsPencilSquare, BsTrash, BsInfoCircleFill } from 'react-icons/bs';
+import { BsPencilSquare, BsTrash, BsInfoCircleFill, BsX } from 'react-icons/bs';
 import { RiAddFill } from 'react-icons/ri';
 import Modal from 'react-modal';
 import SideBar from './SideBar';
@@ -12,7 +11,7 @@ export default function Posts() {
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentPost, setCurrentPost] = useState({ title: '', description: '', questions: [''] });
+  const [currentPost, setCurrentPost] = useState({ title: '', description: '', questions: [{ question_text: '', preparation_time: '', response_time: '' }] });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -52,7 +51,7 @@ export default function Posts() {
         fetchPosts(currentPage);
         setIsSubmitting(false);
         setIsModalOpen(false);
-        setCurrentPost({ title: '', description: '', questions: [''] });
+        setCurrentPost({ title: '', description: '', questions: [{ question_text: '', preparation_time: '', response_time: '' }] });
       })
       .catch(error => {
         console.error('Erreur lors de l\'ajout du post : ', error);
@@ -74,7 +73,7 @@ export default function Posts() {
         fetchPosts(currentPage);
         setIsSubmitting(false);
         setIsModalOpen(false);
-        setCurrentPost({ title: '', description: '', questions: [''] });
+        setCurrentPost({ title: '', description: '', questions: [{ question_text: '', preparation_time: '', response_time: '' }] });
       })
       .catch(error => {
         console.error('Erreur lors de la mise à jour du post : ', error);
@@ -117,11 +116,16 @@ export default function Posts() {
   };
 
   const addQuestion = () => {
-    setCurrentPost({ ...currentPost, questions: [...currentPost.questions, ''] });
+    setCurrentPost({ ...currentPost, questions: [...currentPost.questions, { question_text: '', preparation_time: '', response_time: '' }] });
   };
 
-  const handleQuestionChange = (index, value) => {
-    const newQuestions = currentPost.questions.map((q, i) => i === index ? value : q);
+  const removeQuestion = (index) => {
+    const newQuestions = currentPost.questions.filter((_, i) => i !== index);
+    setCurrentPost({ ...currentPost, questions: newQuestions });
+  };
+
+  const handleQuestionChange = (index, field, value) => {
+    const newQuestions = currentPost.questions.map((q, i) => i === index ? { ...q, [field]: value } : q);
     setCurrentPost({ ...currentPost, questions: newQuestions });
   };
 
@@ -215,9 +219,9 @@ export default function Posts() {
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
-        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75"
+        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 overflow-y-auto"
       >
-        <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 lg:w-1/3 relative">
+        <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 lg:w-1/3 relative max-h-screen overflow-y-auto">
           <button
             onClick={() => setIsModalOpen(false)}
             className="absolute top-0 right-0 m-2 text-black text-2xl font-bold"
@@ -240,14 +244,39 @@ export default function Posts() {
             onChange={(e) => setCurrentPost({ ...currentPost, description: e.target.value })}
           />
           {currentPost.questions.map((question, index) => (
-            <input
-              key={index}
-              type="text"
-              placeholder={`Question ${index + 1}`}
-              className="border border-gray-300 rounded px-4 py-2 mb-2 w-full"
-              value={question}
-              onChange={(e) => handleQuestionChange(index, e.target.value)}
-            />
+            <div key={index} className="mb-2 relative">
+              <button
+                className="absolute top-2 right-2 text-red-600 hover:text-red-800 text-xl"
+                onClick={() => removeQuestion(index)}
+              >
+                <BsX />
+              </button>
+              <input
+                type="text"
+                placeholder={`Question ${index + 1}`}
+                className="border border-gray-300 rounded px-4 py-2 mb-2 w-full"
+                value={question.question_text}
+                onChange={(e) => handleQuestionChange(index, 'question_text', e.target.value)}
+              />
+              <div className="flex space-x-2">
+                <input
+                  type="number"
+                  placeholder="Temps de préparation (minutes)"
+                  className="border border-gray-300 rounded px-4 py-2 mb-2 w-1/2"
+                  value={question.preparation_time}
+                  min="0"
+                  onChange={(e) => handleQuestionChange(index, 'preparation_time', e.target.value)}
+                />
+                <input
+                  type="number"
+                  placeholder="Temps de réponse (minutes)"
+                  className="border border-gray-300 rounded px-4 py-2 mb-2 w-1/2"
+                  value={question.response_time}
+                  min="0"
+                  onChange={(e) => handleQuestionChange(index, 'response_time', e.target.value)}
+                />
+              </div>
+            </div>
           ))}
           <button
             className="bg-green-600 text-white px-4 py-2 rounded-md mb-2"
@@ -294,9 +323,9 @@ export default function Posts() {
       <Modal
         isOpen={showDetailsModal}
         onRequestClose={handleCloseDetailsModal}
-        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75"
+        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 overflow-y-auto"
       >
-        <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 lg:w-1/3 relative">
+        <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 lg:w-1/3 relative max-h-screen overflow-y-auto">
           <button
             onClick={handleCloseDetailsModal}
             className="absolute top-0 right-0 m-2 text-black text-2xl font-bold"
@@ -304,14 +333,20 @@ export default function Posts() {
             &times;
           </button>
           <h2 className="text-xl font-semibold mb-4">{currentPost.title}</h2>
-          <p className="text-gray-600 mb-4">Date de création: {currentPost.created_at}</p>
+          <p className="text-gray-600 mb-4">Date de création: {new Date(currentPost.created_at).toLocaleDateString("fr-FR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}</p>
           <h3 className="text-lg font-semibold mb-2">Description</h3>
           <p className="text-gray-800 mb-4">{currentPost.description}</p>
           <h3 className="text-lg font-semibold mb-2">Questions</h3>
-          <ul>
+          <ul className="list-disc pl-5">
             {currentPost.questions && currentPost.questions.map((question, index) => (
               <li key={index} className="text-gray-800 mb-2">
-                Question {index + 1}: {question.question_text}
+                <strong>Question {index + 1}:</strong> {question.question_text} <br />
+                <strong>Temps de préparation:</strong> {question.preparation_time} minutes <br />
+                <strong>Temps de réponse:</strong> {question.response_time} minutes
               </li>
             ))}
           </ul>

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,12 +11,12 @@ class Question extends Model
 
     protected $fillable = [
         'question_text',
-        'post_id'
+        'post_id',
+        'preparation_time',
+        'response_time',
     ];
-
     public function post()
     {
         return $this->belongsTo(Post::class);
     }
 }
-

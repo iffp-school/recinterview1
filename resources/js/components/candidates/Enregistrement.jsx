@@ -18,6 +18,10 @@ function Enregistrement() {
     const [candidateId, setCandidateId] = useState(null);
     const [isFinalModalOpen, setIsFinalModalOpen] = useState(false);
 
+    const [preparationTime, setPreparationTime] = useState(0);
+    const [responseTime, setResponseTime] = useState(0);
+    const [isPreparation, setIsPreparation] = useState(true);
+
     const openFinalModal = () => setIsFinalModalOpen(true);
     const closeFinalModal = () => setIsFinalModalOpen(false);
 
@@ -27,11 +31,14 @@ function Enregistrement() {
                 const response = await axiosClient.get(`/posts/${selectedPostId}`);
                 setPost(response.data);
 
-                // Récupérez l'ID du candidat via l'email
                 const candidateResponse = await axiosClient.get(`/candidates/email/${email}`);
-                console.log(candidateResponse.data);
                 if (candidateResponse.data) {
                     setCandidateId(candidateResponse.data.id);
+                }
+
+                if (response.data.questions.length > 0) {
+                    setPreparationTime(response.data.questions[0].preparation_time * 60);
+                    setResponseTime(response.data.questions[0].response_time * 60);
                 }
             } catch (error) {
                 console.error("Erreur lors de la récupération des données du poste ou du candidat:", error);
@@ -46,7 +53,7 @@ function Enregistrement() {
         if (recording) {
             timer = setInterval(() => {
                 setElapsedTime(prevTime => {
-                    if (prevTime >= 60) {
+                    if (prevTime >= responseTime) {
                         stopRecording();
                         clearInterval(timer);
                         return prevTime;
@@ -56,7 +63,25 @@ function Enregistrement() {
             }, 1000);
         }
         return () => clearInterval(timer);
-    }, [recording]);
+    }, [recording, responseTime]);
+
+    useEffect(() => {
+        let timer;
+        if (isPreparation && preparationTime > 0) {
+            timer = setInterval(() => {
+                setPreparationTime(prevTime => {
+                    if (prevTime <= 1) {
+                        clearInterval(timer);
+                        startRecording();
+                        setIsPreparation(false);
+                        return 0;
+                    }
+                    return prevTime - 1;
+                });
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [isPreparation, preparationTime]);
 
     const startRecording = () => {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -83,23 +108,19 @@ function Enregistrement() {
         const blob = new Blob([event.data], { type: 'video/mp4' });
         const videoFile = new File([blob], 'enregistrement.mp4', { type: 'video/mp4' });
 
-        if (videoFile.type !== 'video/mp4') {
-            console.log('Le format du fichier vidéo est incorrect. Veuillez sélectionner un fichier au format MP4.');
-            return;
-        }
-        console.log('Fichier vidéo : ', videoFile);
-
         const formData = new FormData();
         formData.append('video', videoFile);
         formData.append('candidate_id', candidateId);
 
         axiosClient.post('/responses', formData)
             .then(response => {
-                console.log(response.data);
                 if (currentQuestionIndex + 1 < post.questions.length) {
                     setCurrentQuestionIndex(prevIndex => prevIndex + 1);
                     setSubmitted(false);
                     setElapsedTime(0);
+                    setIsPreparation(true);
+                    setPreparationTime(post.questions[currentQuestionIndex + 1].preparation_time * 60);
+                    setResponseTime(post.questions[currentQuestionIndex + 1].response_time * 60);
                 } else {
                     openFinalModal();
                 }
@@ -141,13 +162,22 @@ function Enregistrement() {
                                         </span>
                                     </div>
                                     <video ref={videoRef} className="mb-2 w-full" muted autoPlay />
-                                    {recording && (
+                                    {!isFinalModalOpen && recording ? (
                                         <div className="absolute top-0 right-0 mt-2 mr-2">
-                                            <span className="bg-red-500 text-white text-sm font-bold px-2 py-1 rounded-full flex items-center">
+                                            <span className={`bg-red-500 text-white text-sm font-bold px-2 py-1 rounded-full flex items-center ${responseTime - elapsedTime <= 15 ? 'animate-pulse' : ''}`}>
                                                 <FaRegClock className="mr-1" />
-                                                {Math.floor(elapsedTime / 60)}:{elapsedTime % 60 < 10 ? '0' : ''}{elapsedTime % 60}
+                                                Réponse : {Math.floor((responseTime - elapsedTime) / 60)}:{(responseTime - elapsedTime) % 60 < 10 ? '0' : ''}{(responseTime - elapsedTime) % 60}
                                             </span>
                                         </div>
+                                    ) : (
+                                        !isFinalModalOpen && isPreparation && (
+                                            <div className="absolute top-0 right-0 mt-2 mr-2">
+                                                <span className="bg-yellow-500 text-white text-sm font-bold px-2 py-1 rounded-full flex items-center">
+                                                    <FaRegClock className="mr-1" />
+                                                    Préparation : {Math.floor(preparationTime / 60)}:{preparationTime % 60 < 10 ? '0' : ''}{preparationTime % 60}
+                                                </span>
+                                            </div>
+                                        )
                                     )}
                                 </div>
                             </div>
@@ -155,7 +185,7 @@ function Enregistrement() {
                                 {currentQuestionIndex < post.questions.length && (
                                     <button
                                         className={`bg-${recording ? 'green' : 'blue'}-500 hover:bg-${recording ? 'green' : 'blue'}-700 text-white font-bold py-2 px-4 mx-2 rounded`}
-                                        onClick={recording ? stopRecording : (submitted ? handleNextQuestion : startRecording)}
+                                        onClick={recording ? stopRecording : startRecording}
                                     >
                                         {recording ? 'Soumettre' : 'Enregistrer'}
                                     </button>

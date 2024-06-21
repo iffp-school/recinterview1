@@ -92,7 +92,6 @@ function Enregistrement() {
         const formData = new FormData();
         formData.append('video', videoFile);
         formData.append('candidate_id', candidateId);
-        formData.append('question_id', post.questions[currentQuestionIndex].id);
 
         axiosClient.post('/responses', formData)
             .then(response => {

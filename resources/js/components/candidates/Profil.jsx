@@ -25,6 +25,7 @@ function Profil() {
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalData, setModalData] = useState({});
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -59,11 +60,16 @@ function Profil() {
     const onSubmit = async (data) => {
         try {
             await axiosClient.post('/candidates', data);
+            setModalData(data);
             openModal();
-            navigate('/enregistrement', { state: { email: data.email, selectedPostId: data.post_id } });
         } catch (error) {
             console.error("Erreur lors de la soumission des données du candidat:", error);
         }
+    };
+
+    const startRecording = () => {
+        closeModal();
+        navigate('/enregistrement', { state: { email: modalData.email, selectedPostId: modalData.post_id } });
     };
 
     return (
@@ -121,7 +127,7 @@ function Profil() {
                     </p>
                     <button
                         className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                        onClick={() => navigate('/enregistrement', { state: { email: data.email, selectedPostId: data.post_id } })}
+                        onClick={startRecording}
                     >
                         Démarrer l'enregistrement
                     </button>

@@ -8,9 +8,24 @@ use Illuminate\Support\Facades\Validator;
 
 class CandidateController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $candidatesWithDetails = Candidate::with(['post.questions', 'responses'])->paginate(10);
+        $query = Candidate::with(['post.questions', 'responses']);
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhereHas('post', function ($q) use ($search) {
+                        $q->where('title', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        $candidatesWithDetails = $query->paginate(10);
+
         return response()->json([
             'candidates' => $candidatesWithDetails->items(),
             'total' => $candidatesWithDetails->total()

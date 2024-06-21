@@ -16,8 +16,8 @@ export default function Candidates() {
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [candidateToDelete, setCandidateToDelete] = useState(null);
 
-    const fetchCandidates = (page) => {
-        axiosClient.get(`/candidates?page=${page}&limit=10`)
+    const fetchCandidates = (page, searchTerm = '') => {
+        axiosClient.get(`/candidates?page=${page}&limit=10&search=${searchTerm}`)
             .then(response => {
                 setCandidates(response.data.candidates);
                 setTotalPages(Math.ceil(response.data.total / 10));
@@ -28,8 +28,13 @@ export default function Candidates() {
     };
 
     useEffect(() => {
-        fetchCandidates(currentPage);
-    }, [currentPage]);
+        fetchCandidates(currentPage, recherche);
+    }, [currentPage, recherche]);
+
+    const handleSearch = (e) => {
+        setRecherche(e.target.value.toLowerCase());
+        setCurrentPage(1); // Reset to first page when search term changes
+    };
 
     const handleVideoClick = (videoUrl, question) => {
         setCurrentVideoUrl(videoUrl);
@@ -64,16 +69,16 @@ export default function Candidates() {
     };
 
     return (
-        <div className="flex flex-col md:flex-row h-screen bg-gray-800 text-white">
+        <div className="flex flex-col md:flex-row h-screen bg-gray-800">
             <SideBar />
             <div className="w-full md:w-3/4 p-4">
                 <div className="flex flex-col md:flex-row items-center justify-between mb-4">
                     <input
                         type="text"
-                        className="border border-gray-300 rounded px-4 py-2 w-full md:w-64 bg-white mb-2 md:mb-0"
-                        placeholder="Rechercher par nom"
+                        className="border border-gray-300 rounded px-4 py-2 w-full md:w-64  mb-2 md:mb-0"
+                        placeholder="nom, email ou poste"
                         value={recherche}
-                        onChange={(e) => setRecherche(e.target.value)}
+                        onChange={handleSearch}
                     />
                 </div>
                 <div className="overflow-x-auto">

@@ -2,7 +2,8 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
-
+    
+    Options +FollowSymLinks
     RewriteEngine On
 
     # Handle Authorization Header
@@ -13,7 +14,10 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
-    RewriteRule ^videos/(.*)$ storage/app/public/videos/$1 [L]
+
+    # Handle Video Requests
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^storage/videos/(.*)$ storage/app/public/videos/$1 [L]
 
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
@@ -25,5 +29,4 @@
     Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
     Header set Access-Control-Allow-Headers "Accept, Content-Type, Authorization"
     </IfModule>
-
 </IfModule>

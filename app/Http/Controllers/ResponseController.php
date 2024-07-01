@@ -19,8 +19,8 @@ class ResponseController extends Controller
 
         $videoPath = $request->file('video')->store('public/videos');
         // $videoUrl = str_replace('public/', '', $videoPath);
-        // $videoUrl = asset('storage/' . $videoPath);
-        $videoUrl = Storage::url($videoPath);
+        $videoUrl = asset('storage/' . str_replace('public/', '', $videoPath));
+        // $videoUrl = Storage::url($videoPath);
         
 
 

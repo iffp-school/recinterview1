@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Response;
 use App\Models\Candidate;
+use Illuminate\Support\Facades\Storage;
 
 class ResponseController extends Controller
 {
@@ -17,7 +18,11 @@ class ResponseController extends Controller
         ]);
 
         $videoPath = $request->file('video')->store('public/videos');
-        $videoUrl = str_replace('public/', '', $videoPath);
+        // $videoUrl = str_replace('public/', '', $videoPath);
+        // $videoUrl = asset('storage/' . $videoPath);
+        $videoUrl = Storage::url($videoPath);
+        
+
 
         $response = new Response([
             'candidate_id' => $request->input('candidate_id'),

@@ -38,10 +38,13 @@ export default function Candidates() {
     };
 
     const handleVideoClick = (videoUrl, question) => {
-        setCurrentVideoUrl(videoUrl);
+        const newVideoUrl = videoUrl; // Assurez-vous que l'URL est correcte
+        setCurrentVideoUrl(newVideoUrl);
+        console.log(newVideoUrl); // Vérifiez l'URL ici
         setCurrentQuestion(question ? question.question_text : 'Question not found');
         setIsModalOpen(true);
     };
+
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -173,7 +176,9 @@ export default function Candidates() {
                         &times;
                     </button>
                     <h2 className="text-xl font-bold mb-2">{currentQuestion}</h2>
-                    <ReactPlayer url={currentVideoUrl} width="100%" height="100%" controls />
+                    {/* <ReactPlayer url={currentVideoUrl} width="100%" height="100%" controls /> */}
+                    {/* <video url={currentVideoUrl} width="100%" height="100%" controls /> */}
+                    <video src={currentVideoUrl} width="100%" height="100%" controls />
                 </div>
             </Modal>
             <Modal

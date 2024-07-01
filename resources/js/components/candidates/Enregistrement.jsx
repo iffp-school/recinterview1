@@ -24,7 +24,7 @@ function Enregistrement() {
 
     const openFinalModal = () => setIsFinalModalOpen(true);
     const closeFinalModal = () => setIsFinalModalOpen(false);
-
+    
     useEffect(() => {
         const fetchPostAndCandidate = async () => {
             try {

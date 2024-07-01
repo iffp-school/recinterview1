@@ -82,7 +82,7 @@ export default function Candidates() {
                     <div className="flex flex-col md:flex-row items-center justify-between mb-4">
                         <input
                             type="text"
-                            className="border border-gray-300 rounded px-4 py-2 w-full md:w-64 bg-white mb-2 md:mb-0"
+                            className="border border-gray-300 text-black rounded px-4 py-2 w-full md:w-64 bg-white mb-2 md:mb-0"
                             placeholder="Nom, Email, Poste"
                             value={recherche}
                             onChange={handleSearch}

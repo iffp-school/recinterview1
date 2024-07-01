@@ -19,6 +19,8 @@ export default function Posts() {
   const [postIdToDelete, setPostIdToDelete] = useState(null);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [linkToSend, setLinkToSend] = useState('');
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
+
 
 
   const fetchPosts = (page, term = '') => {
@@ -125,6 +127,13 @@ export default function Posts() {
     setLinkToSend(link);
     setIsLinkModalOpen(true);
   };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(linkToSend);
+    setIsLinkCopied(true);
+    setTimeout(() => setIsLinkCopied(false), 2000); // Réinitialise l'état après 2 secondes
+  };
+
 
   const addQuestion = () => {
     setCurrentPost({ ...currentPost, questions: [...currentPost.questions, { question_text: '', preparation_time: '', response_time: '' }] });
@@ -388,10 +397,10 @@ export default function Posts() {
             {linkToSend}
           </div>
           <button
-            className="bg-blue-600 text-white px-4 py-2 rounded-md"
-            onClick={() => navigator.clipboard.writeText(linkToSend)}
+            className={`px-4 py-2 rounded-md ${isLinkCopied ? 'bg-green-600' : 'bg-blue-600'} text-white`}
+            onClick={handleCopyLink}
           >
-            Copier le lien
+            {isLinkCopied ? 'Lien copié!' : 'Copier le lien'}
           </button>
         </div>
       </Modal>

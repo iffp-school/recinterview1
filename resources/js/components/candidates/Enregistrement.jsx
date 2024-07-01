@@ -128,7 +128,16 @@ function Enregistrement() {
             .catch(error => console.log('Erreur lors de l\'envoi de la vidéo : ', error.response.data));
     };
 
+    const stopCamera = () => {
+        let stream = videoRef.current.srcObject;
+        let tracks = stream.getTracks();
+
+        tracks.forEach(track => track.stop());
+        videoRef.current.srcObject = null;
+    };
+
     const handleQuit = () => {
+        stopCamera();
         closeFinalModal();
         navigate('/');
     };

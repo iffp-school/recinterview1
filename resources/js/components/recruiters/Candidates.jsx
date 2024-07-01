@@ -38,7 +38,7 @@ export default function Candidates() {
     };
 
     const handleVideoClick = (videoUrl, question) => {
-        const newVideoUrl = `${videoUrl}`;
+        const newVideoUrl = `/storage/${videoUrl}`;
         setCurrentVideoUrl(newVideoUrl);
         console.log(newVideoUrl);
         setCurrentQuestion(question ? question.question_text : 'Question not found');

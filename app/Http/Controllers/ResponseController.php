@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Response;
 use App\Models\Candidate;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+
 
 class ResponseController extends Controller
 {
@@ -14,7 +15,7 @@ class ResponseController extends Controller
     {
         $request->validate([
             'candidate_id' => 'required|exists:candidates,id',
-            'video' => 'required|file|mimes:mp4,mov,mkv,ogg,qt|max:20000' 
+            'video' => 'required|file|mimes:mp4,mov,mkv,ogg,qt|max:20000'
         ]);
 
         $videoPath = $request->file('video')->store('public/videos');
@@ -26,6 +27,19 @@ class ResponseController extends Controller
         ]);
 
         $response->save();
+
+        // Exécuter le script pour recréer le lien symbolique
+        $output = null;
+        $retval = null;
+        exec(base_path('scripts/recreate_symlink.sh'), $output, $retval);
+        // Log de la sortie et du code de retour du script
+        Log::info('Output of recreate_symlink.sh', ['output' => $output, 'retval' => $retval]);
+
+        if ($retval !== 0) {
+            Log::error('Error executing recreate_symlink.sh', ['output' => $output, 'retval' => $retval]);
+        } else {
+            Log::info('recreate_symlink.sh executed successfully', ['output' => $output]);
+        }
 
         return response()->json(['message' => 'Video uploaded successfully', 'video_url' => $videoUrl], 200);
     }

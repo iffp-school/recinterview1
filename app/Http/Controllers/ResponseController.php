@@ -18,11 +18,7 @@ class ResponseController extends Controller
         ]);
 
         $videoPath = $request->file('video')->store('public/videos');
-        // $videoUrl = str_replace('public/', '', $videoPath);
-        $videoUrl = asset('storage/' . str_replace('public/', '', $videoPath));
-        // $videoUrl = Storage::url($videoPath);
-        
-
+        $videoUrl = str_replace('public/', '', $videoPath);
 
         $response = new Response([
             'candidate_id' => $request->input('candidate_id'),

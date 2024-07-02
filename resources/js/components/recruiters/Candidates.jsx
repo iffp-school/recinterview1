@@ -54,9 +54,8 @@ export default function Candidates() {
     };
 
     const handleVideoClick = (videoUrl, question) => {
-        const newVideoUrl = `/storage/${videoUrl}`;
+        const newVideoUrl = `${import.meta.env.VITE_API_BASE_URL}/storage/${videoUrl}`;
         setCurrentVideoUrl(newVideoUrl);
-        console.log(newVideoUrl);
         setCurrentQuestion(question ? question.question_text : 'Question not found');
         setIsModalOpen(true);
     };
@@ -212,8 +211,6 @@ export default function Candidates() {
                     </button>
                     <h2 className="text-xl font-bold mb-2">{currentQuestion}</h2>
                     <ReactPlayer url={currentVideoUrl} width="100%" height="100%" controls />
-                    {/* <video url={currentVideoUrl} width="100%" height="100%" controls /> */}
-                    {/* <video src={currentVideoUrl} width="100%" height="100%" controls /> */}
                 </div>
             </Modal>
             <Modal

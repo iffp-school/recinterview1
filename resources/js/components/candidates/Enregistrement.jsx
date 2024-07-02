@@ -24,7 +24,7 @@ function Enregistrement() {
 
     const openFinalModal = () => setIsFinalModalOpen(true);
     const closeFinalModal = () => setIsFinalModalOpen(false);
-    
+
     useEffect(() => {
         const fetchPostAndCandidate = async () => {
             try {
@@ -137,10 +137,18 @@ function Enregistrement() {
     };
 
     const handleQuit = () => {
-        stopCamera();
-        closeFinalModal();
-        navigate('/');
+        axiosClient.post('/execute-storage-script')
+            .then(response => {
+                console.log('Script exécuté avec succès :', response.data);
+                stopCamera();
+                closeFinalModal();
+                navigate('/');
+            })
+            .catch(error => {
+                console.error('Erreur lors de l\'exécution du script :', error.response ? error.response.data : error.message);
+            });
     };
+
 
     if (!post || !candidateId) {
         return <div className="text-white">Loading...</div>;

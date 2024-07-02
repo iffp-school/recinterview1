@@ -26,6 +26,7 @@ Route::post('/responses', [ResponseController::class, 'store']);
 Route::get('/responses/{id}', [ResponseController::class, 'show']);
 Route::put('/responses/{id}', [ResponseController::class, 'update']);
 Route::delete('/responses/{id}', [ResponseController::class, 'destroy']);
+Route::post('/execute-storage-script', [ResponseController::class, 'executeStorageScript']);
 
 Route::get('/recruiters', [RecruiterController::class, 'index']);
 Route::post('/recruiters', [RecruiterController::class, 'store']);

@@ -32,7 +32,7 @@ class CandidateController extends Controller
             if ($sortBy === 'post.title') {
                 $query->join('posts', 'candidates.post_id', '=', 'posts.id')
                       ->orderBy('posts.title', $sortDirection)
-                      ->select('candidates.*'); // Sélectionner les colonnes candidates pour éviter les conflits
+                      ->select('candidates.*'); 
             } elseif (in_array($sortBy, $sortableColumns)) {
                 $query->orderBy($sortBy, $sortDirection);
             } else {

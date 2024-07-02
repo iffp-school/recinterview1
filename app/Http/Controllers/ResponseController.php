@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Response;
 use App\Models\Candidate;
 use Illuminate\Support\Facades\Log;
-
-
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 class ResponseController extends Controller
 {
     // Méthode pour stocker une nouvelle vidéo
@@ -28,19 +28,6 @@ class ResponseController extends Controller
 
         $response->save();
 
-        // Exécuter le script pour recréer le lien symbolique
-        $output = null;
-        $retval = null;
-        exec(base_path('scripts/recreate_symlink.sh'), $output, $retval);
-        // Log de la sortie et du code de retour du script
-        Log::info('Output of recreate_symlink.sh', ['output' => $output, 'retval' => $retval]);
-
-        if ($retval !== 0) {
-            Log::error('Error executing recreate_symlink.sh', ['output' => $output, 'retval' => $retval]);
-        } else {
-            Log::info('recreate_symlink.sh executed successfully', ['output' => $output]);
-        }
-
         return response()->json(['message' => 'Video uploaded successfully', 'video_url' => $videoUrl], 200);
     }
 
@@ -50,5 +37,24 @@ class ResponseController extends Controller
         $totalVideos = count($videos);
 
         return response()->json(['videos' => $videos, 'total' => $totalVideos], 200);
+    }
+
+    public function executeStorageScript()
+    {
+        Log::info('executeScript method called');
+
+        $process = new Process(['sh', base_path('scripts/recreate_symlink.sh')]);
+        $process->run();
+
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            Log::error('Error executing recreate_symlink.sh', ['output' => $process->getErrorOutput(), 'retval' => $process->getExitCode()]);
+            throw new ProcessFailedException($process);
+        }
+
+        $output = $process->getOutput();
+        Log::info('Script output', ['output' => $output]);
+
+        return response()->json(['message' => 'Script executed successfully', 'output' => $output], 200);
     }
 }

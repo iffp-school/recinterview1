@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom'; // Importer useParams
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from 'react-redux';
 import { setPosts } from '../../redux/slices/postSlice';
@@ -18,9 +18,10 @@ const formSchema = z.object({
 
 function Profil() {
     const navigate = useNavigate();
+    const { postId } = useParams(); // Utiliser useParams pour récupérer l'ID du poste
     const dispatch = useDispatch();
-    const [posts, setPostsState] = useState([]);
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const [post, setPost] = useState(null);
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: zodResolver(formSchema)
     });
 
@@ -31,31 +32,20 @@ function Profil() {
     const closeModal = () => setIsModalOpen(false);
 
     useEffect(() => {
-        const fetchPosts = async () => {
+        const fetchPost = async () => {
             try {
-                const response = await axiosClient.get('/posts');
-                if (response.data && Array.isArray(response.data.posts)) {
-                    const postsData = response.data.posts.map(post => ({
-                        id: post.id,
-                        recruiter_id: post.recruiter_id,
-                        title: post.title,
-                        description: post.description,
-                        questions: post.questions.map(question => ({
-                            id: question.id,
-                            post_id: question.post_id,
-                            question_text: question.question_text,
-                        }))
-                    }));
-                    setPostsState(postsData);
-                    dispatch(setPosts(postsData));
+                const response = await axiosClient.get(`/posts/${postId}`);
+                if (response.data) {
+                    setPost(response.data);
+                    setValue('post_id', String(response.data.id)); // Définir la valeur de post_id
                 }
             } catch (error) {
-                console.error("Erreur lors de la récupération des postes:", error);
+                console.error("Erreur lors de la récupération du poste:", error);
             }
         };
 
-        fetchPosts();
-    }, [dispatch]);
+        fetchPost();
+    }, [postId, setValue]);
 
     const onSubmit = async (data) => {
         try {
@@ -94,12 +84,15 @@ function Profil() {
                         {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
                     </div>
                     <div className="mb-4">
-                        <select className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400" id="post_id" {...register("post_id")}>
-                            <option value="">Sélectionnez un poste</option>
-                            {posts.map((post) => (
-                                <option key={post.id} value={post.id}>{post.title}</option>
-                            ))}
-                        </select>
+                        <input
+                            type="text"
+                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
+                            id="post_title"
+                            placeholder="Titre du poste"
+                            value={post ? post.title : ''}
+                            disabled
+                        />
+                        <input type="hidden" {...register("post_id")} />
                         {errors.post_id && <p className="text-red-500 text-sm">{errors.post_id.message}</p>}
                     </div>
                     <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

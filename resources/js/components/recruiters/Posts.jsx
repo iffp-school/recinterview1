@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BsPencilSquare, BsTrash, BsInfoCircleFill, BsX, BsSend } from 'react-icons/bs';
+import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import { RiAddFill } from 'react-icons/ri';
 import Modal from 'react-modal';
 import SideBar from './SideBar';
@@ -11,6 +12,8 @@ export default function Posts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('');
+  const [sortDirection, setSortDirection] = useState('asc');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPost, setCurrentPost] = useState({ title: '', description: '', questions: [{ question_text: '', preparation_time: '', response_time: '' }] });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,10 +24,16 @@ export default function Posts() {
   const [linkToSend, setLinkToSend] = useState('');
   const [isLinkCopied, setIsLinkCopied] = useState(false);
 
-
-
-  const fetchPosts = (page, term = '') => {
-    axiosClient.get(`/posts?page=${page}&limit=10&search=${term}`)
+  const fetchPosts = (page, term = '', sortBy = '', sortDirection = 'asc') => {
+    axiosClient.get('/posts', {
+      params: {
+        page,
+        limit: 10,
+        search: term,
+        sort_by: sortBy,
+        sort_direction: sortDirection
+      }
+    })
       .then(response => {
         setPosts(response.data.posts);
         setTotalPages(Math.ceil(response.data.total / 10));
@@ -35,12 +44,18 @@ export default function Posts() {
   };
 
   useEffect(() => {
-    fetchPosts(currentPage, searchTerm);
-  }, [currentPage, searchTerm]);
+    fetchPosts(currentPage, searchTerm, sortBy, sortDirection);
+  }, [currentPage, searchTerm, sortBy, sortDirection]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
     setCurrentPage(1); // Reset to first page when search term changes
+  };
+
+  const handleSort = (column) => {
+    const newSortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    setSortBy(column);
+    setSortDirection(newSortDirection);
   };
 
   const handleSubmit = () => {
@@ -54,7 +69,7 @@ export default function Posts() {
 
     axiosClient.post('/posts', postData)
       .then(response => {
-        fetchPosts(currentPage);
+        fetchPosts(currentPage, searchTerm, sortBy, sortDirection);
         setIsSubmitting(false);
         setIsModalOpen(false);
         setCurrentPost({ title: '', description: '', questions: [{ question_text: '', preparation_time: '', response_time: '' }] });
@@ -76,7 +91,7 @@ export default function Posts() {
 
     axiosClient.put(`/posts/${currentPost.id}`, postData)
       .then(response => {
-        fetchPosts(currentPage);
+        fetchPosts(currentPage, searchTerm, sortBy, sortDirection);
         setIsSubmitting(false);
         setIsModalOpen(false);
         setCurrentPost({ title: '', description: '', questions: [{ question_text: '', preparation_time: '', response_time: '' }] });
@@ -92,7 +107,7 @@ export default function Posts() {
 
     axiosClient.delete(`/posts/${postIdToDelete}`)
       .then(() => {
-        fetchPosts(currentPage);
+        fetchPosts(currentPage, searchTerm, sortBy, sortDirection);
         setIsSubmitting(false);
         setShowConfirmationModal(false);
         setPostIdToDelete(null);
@@ -122,18 +137,18 @@ export default function Posts() {
   };
 
   const handleSendLink = (postId) => {
-    // const link = `https://recvue.hellow.fr/profil/${postId}`;
-    const link = `https://recvue.hellow.fr/profil/`;
+    const baseUrl = import.meta.env.VITE_API_BASE_URL
+    const link = `${baseUrl}/profil/${postId}`;
     setLinkToSend(link);
     setIsLinkModalOpen(true);
   };
+
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(linkToSend);
     setIsLinkCopied(true);
     setTimeout(() => setIsLinkCopied(false), 2000); // Réinitialise l'état après 2 secondes
   };
-
 
   const addQuestion = () => {
     setCurrentPost({ ...currentPost, questions: [...currentPost.questions, { question_text: '', preparation_time: '', response_time: '' }] });
@@ -174,9 +189,17 @@ export default function Posts() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-blue-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Titre</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Date de création</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer" onClick={() => handleSort('title')}>
+                    Titre
+                    {sortBy === 'title' ? (sortDirection === 'asc' ? <FaSortUp className="inline ml-1" /> : <FaSortDown className="inline ml-1" />) : <FaSort className="inline ml-1" />}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer" onClick={() => handleSort('created_at')}>
+                    Date de création
+                    {sortBy === 'created_at' ? (sortDirection === 'asc' ? <FaSortUp className="inline ml-1" /> : <FaSortDown className="inline ml-1" />) : <FaSort className="inline ml-1" />}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -191,6 +214,8 @@ export default function Posts() {
                           year: "numeric",
                           month: "long",
                           day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit"
                         })}
                       </div></td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -360,11 +385,15 @@ export default function Posts() {
             &times;
           </button>
           <h2 className="text-xl font-semibold mb-4">{currentPost.title}</h2>
-          <p className="text-gray-600 mb-4">Date de création: {new Date(currentPost.created_at).toLocaleDateString("fr-FR", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}</p>
+          <p className="text-gray-600 mb-4">Date de création:
+            {new Date(currentPost.created_at).toLocaleDateString("fr-FR", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
           <h3 className="text-lg font-semibold mb-2">Description</h3>
           <p className="text-gray-800 mb-4">{currentPost.description}</p>
           <h3 className="text-lg font-semibold mb-2">Questions</h3>

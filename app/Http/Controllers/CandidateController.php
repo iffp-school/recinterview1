@@ -12,7 +12,7 @@ class CandidateController extends Controller
     {
         $query = Candidate::with(['post.questions', 'responses']);
 
-        if ($request->has('search')) {
+        if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', '%' . $search . '%')
@@ -22,6 +22,22 @@ class CandidateController extends Controller
                         $q->where('title', 'like', '%' . $search . '%');
                     });
             });
+        }
+
+        if ($request->has('sort_by') && $request->has('sort_direction') && !empty($request->sort_by) && !empty($request->sort_direction)) {
+            $sortBy = $request->sort_by;
+            $sortDirection = $request->sort_direction;
+            $sortableColumns = ['first_name', 'last_name', 'email', 'phone', 'created_at'];
+            
+            if ($sortBy === 'post.title') {
+                $query->join('posts', 'candidates.post_id', '=', 'posts.id')
+                      ->orderBy('posts.title', $sortDirection)
+                      ->select('candidates.*'); // Sélectionner les colonnes candidates pour éviter les conflits
+            } elseif (in_array($sortBy, $sortableColumns)) {
+                $query->orderBy($sortBy, $sortDirection);
+            } else {
+                return response()->json(['error' => 'Invalid sort column'], 400);
+            }
         }
 
         $candidatesWithDetails = $query->paginate(10);

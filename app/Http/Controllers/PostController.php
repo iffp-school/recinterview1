@@ -12,8 +12,23 @@ class PostController extends Controller
     {
         $query = Post::with('questions');
 
-        if ($request->has('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where('title', 'like', '%' . $search . '%');
+        }
+
+        if ($request->has('sort_by') && $request->has('sort_direction') && !empty($request->sort_by) && !empty($request->sort_direction)) {
+            $sortBy = $request->sort_by;
+            $sortDirection = $request->sort_direction;
+
+            // Liste blanche pour les colonnes triables
+            $sortableColumns = ['title', 'created_at'];
+
+            if (in_array($sortBy, $sortableColumns)) {
+                $query->orderBy($sortBy, $sortDirection);
+            } else {
+                return response()->json(['error' => 'Invalid sort column'], 400);
+            }
         }
 
         $posts = $query->paginate(10);

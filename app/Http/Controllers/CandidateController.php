@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CandidateController extends Controller
 {
+    // app/Http/Controllers/CandidateController.php
+
     public function index(Request $request)
     {
         $query = Candidate::with(['post.questions', 'responses']);
@@ -28,11 +30,11 @@ class CandidateController extends Controller
             $sortBy = $request->sort_by;
             $sortDirection = $request->sort_direction;
             $sortableColumns = ['first_name', 'last_name', 'email', 'phone', 'created_at'];
-            
+
             if ($sortBy === 'post.title') {
                 $query->join('posts', 'candidates.post_id', '=', 'posts.id')
-                      ->orderBy('posts.title', $sortDirection)
-                      ->select('candidates.*'); 
+                    ->orderBy('posts.title', $sortDirection)
+                    ->select('candidates.*');
             } elseif (in_array($sortBy, $sortableColumns)) {
                 $query->orderBy($sortBy, $sortDirection);
             } else {
@@ -41,6 +43,13 @@ class CandidateController extends Controller
         }
 
         $candidatesWithDetails = $query->paginate(10);
+
+        // Assurez-vous que l'URL complète du CV est renvoyée
+        foreach ($candidatesWithDetails->items() as $candidate) {
+            if ($candidate->cv) {
+                $candidate->cv_url = url('storage/' . $candidate->cv);
+            }
+        }
 
         return response()->json([
             'candidates' => $candidatesWithDetails->items(),
@@ -55,14 +64,21 @@ class CandidateController extends Controller
             'last_name' => 'required|string',
             'email' => 'required|email|unique:candidates',
             'phone' => 'nullable|string',
-            'post_id' => 'required|exists:posts,id'
+            'post_id' => 'required|exists:posts,id',
+            'cv' => 'required|file|mimes:pdf|max:2048' // Ajout de la validation pour le CV
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $candidate = Candidate::create($request->all());
+        $data = $request->all();
+        if ($request->hasFile('cv')) {
+            $cvPath = $request->file('cv')->store('public/cvs');
+            $data['cv'] = str_replace('public/', '', $cvPath);
+        }
+
+        $candidate = Candidate::create($data);
         return response()->json($candidate, 201);
     }
 

@@ -14,6 +14,7 @@ const formSchema = z.object({
     email: z.string().email("Email invalide"),
     phone: z.string().nullable(),
     post_id: z.string().nonempty("Veuillez sélectionner un poste"),
+    cv: z.any().optional()
 });
 
 function Profil() {
@@ -49,11 +50,25 @@ function Profil() {
 
     const onSubmit = async (data) => {
         try {
-            await axiosClient.post('/candidates', data);
+            const formData = new FormData();
+            Object.keys(data).forEach(key => {
+                if (key === 'cv' && data[key][0]) {
+                    formData.append(key, data[key][0]);
+                } else {
+                    formData.append(key, data[key]);
+                }
+            });
+
+            await axiosClient.post('/candidates', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
             setModalData(data);
             openModal();
         } catch (error) {
-            console.error("Erreur lors de la soumission des données du candidat:", error);
+            console.error("Erreur lors de la soumission des données du candidat:", error.response.data);
         }
     };
 
@@ -66,7 +81,7 @@ function Profil() {
         <div className="bg-gray-800 min-h-screen flex justify-center items-center">
             <div className="container mx-auto text-center mt-4 max-w-md">
                 <h2 className="text-2xl text-white font-bold mb-4">Renseignez votre profil</h2>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
                     <div className="mb-4">
                         <input type="text" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400" id="first_name" placeholder="Prénom" {...register("first_name")} />
                         {errors.first_name && <p className="text-red-500 text-sm">{errors.first_name.message}</p>}
@@ -83,6 +98,17 @@ function Profil() {
                         <input type="tel" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400" id="phone" placeholder="Numéro de téléphone" {...register("phone")} />
                         {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
                     </div>
+                    <div className="mb-4">
+                        <input
+                            type="file"
+                            accept=".pdf"
+                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
+                            id="cv"
+                            {...register("cv")}
+                        />
+                        {errors.cv && <p className="text-red-500 text-sm">{errors.cv.message}</p>}
+                    </div>
+
                     <div className="mb-4">
                         <input
                             type="text"

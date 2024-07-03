@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import SideBar from './SideBar';
 import NavBar from './NavBar';
 import { axiosClient } from '../../api/axios';
-import { FaTrash, FaVideo, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
+import { FaTrash, FaVideo, FaSort, FaSortUp, FaSortDown, FaFilePdf } from 'react-icons/fa';
 import ReactPlayer from 'react-player';
 
 export default function Candidates() {
@@ -130,6 +130,9 @@ export default function Candidates() {
                                         Réponses
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        CV
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
@@ -171,6 +174,15 @@ export default function Candidates() {
                                                     );
                                                 })}
                                             </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {candidate.cv ? (
+                                                <a href={`${import.meta.env.VITE_API_BASE_URL}/storage/${candidate.cv}`} target="_blank" rel="noopener noreferrer">
+                                                    <FaFilePdf className="text-red-500 text-2xl" />
+                                                </a>
+                                            ) : (
+                                                'Pas de CV'
+                                            )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <button onClick={() => openConfirmModal(candidate.id)} className="text-red-500 hover:text-red-700">

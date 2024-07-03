@@ -73,9 +73,6 @@ function Home() {
           <button onClick={toggleModal} className="text-lg font-semibold">
             Contact
           </button>
-          <Link to="/profil" className="text-lg font-semibold bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-            Espace Candidat
-          </Link>
           <Link to="/login" className="text-lg font-semibold bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
             Espace Recruteur
           </Link>

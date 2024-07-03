@@ -60,27 +60,34 @@ class CandidateController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'gender' => 'required|string|in:Mr,Mme',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required|email|unique:candidates',
             'phone' => 'nullable|string',
-            'post_id' => 'required|exists:posts,id',
-            'cv' => 'required|file|mimes:pdf|max:2048' // Ajout de la validation pour le CV
+            'cv' => 'required|file|mimes:pdf|max:2048',
+            'post_id' => 'required|exists:posts,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $data = $request->all();
-        if ($request->hasFile('cv')) {
-            $cvPath = $request->file('cv')->store('public/cvs');
-            $data['cv'] = str_replace('public/', '', $cvPath);
-        }
+        $cvPath = $request->file('cv')->store('public/cvs');
 
-        $candidate = Candidate::create($data);
+        $candidate = Candidate::create([
+            'gender' => $request->input('gender'),
+            'first_name' => $request->input('first_name'),
+            'last_name' => $request->input('last_name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'cv' => $cvPath,
+            'post_id' => $request->input('post_id')
+        ]);
+
         return response()->json($candidate, 201);
     }
+
 
     public function show($id)
     {

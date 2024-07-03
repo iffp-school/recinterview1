@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from 'react-router-dom'; // Importer useParams
+import { useNavigate, useParams } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from 'react-redux';
 import { setPosts } from '../../redux/slices/postSlice';
@@ -9,17 +9,18 @@ import { axiosClient } from '../../api/axios';
 import Modal from 'react-modal';
 
 const formSchema = z.object({
+    gender: z.enum(['Mr', 'Mme']),
     first_name: z.string().nonempty("Prénom requis"),
     last_name: z.string().nonempty("Nom requis"),
     email: z.string().email("Email invalide"),
     phone: z.string().nullable(),
+    cv: z.instanceof(FileList).refine(files => files.length > 0, "CV requis"),
     post_id: z.string().nonempty("Veuillez sélectionner un poste"),
-    cv: z.any().optional()
 });
 
 function Profil() {
     const navigate = useNavigate();
-    const { postId } = useParams(); // Utiliser useParams pour récupérer l'ID du poste
+    const { postId } = useParams();
     const dispatch = useDispatch();
     const [post, setPost] = useState(null);
     const { register, handleSubmit, formState: { errors }, setValue } = useForm({
@@ -38,7 +39,7 @@ function Profil() {
                 const response = await axiosClient.get(`/posts/${postId}`);
                 if (response.data) {
                     setPost(response.data);
-                    setValue('post_id', String(response.data.id)); // Définir la valeur de post_id
+                    setValue('post_id', String(response.data.id));
                 }
             } catch (error) {
                 console.error("Erreur lors de la récupération du poste:", error);
@@ -82,6 +83,13 @@ function Profil() {
             <div className="container mx-auto text-center mt-4 max-w-md">
                 <h2 className="text-2xl text-white font-bold mb-4">Renseignez votre profil</h2>
                 <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+                    <div className="mb-4">
+                        <select className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400" {...register("gender")}>
+                            <option value="Mr">Mr</option>
+                            <option value="Mme">Mme</option>
+                        </select>
+                        {errors.gender && <p className="text-red-500 text-sm">{errors.gender.message}</p>}
+                    </div>
                     <div className="mb-4">
                         <input type="text" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400" id="first_name" placeholder="Prénom" {...register("first_name")} />
                         {errors.first_name && <p className="text-red-500 text-sm">{errors.first_name.message}</p>}

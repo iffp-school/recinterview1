@@ -3,25 +3,22 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDispatch } from 'react-redux';
-import { setPosts } from '../../redux/slices/postSlice';
 import { axiosClient } from '../../api/axios';
 import Modal from 'react-modal';
 
 const formSchema = z.object({
-    gender: z.enum(['Mr', 'Mme']),
+    gender: z.enum(['Mr', 'Mme'], "Veuillez sélectionner une civilité"),
     first_name: z.string().nonempty("Prénom requis"),
     last_name: z.string().nonempty("Nom requis"),
     email: z.string().email("Email invalide"),
     phone: z.string().nullable(),
     cv: z.instanceof(FileList).refine(files => files.length > 0, "CV requis"),
-    post_id: z.string().nonempty("Veuillez sélectionner un poste"),
+    post_id: z.string()
 });
 
 function Profil() {
     const navigate = useNavigate();
-    const { postId } = useParams();
-    const dispatch = useDispatch();
+    const { postRef } = useParams();
     const [post, setPost] = useState(null);
     const { register, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: zodResolver(formSchema)
@@ -36,7 +33,7 @@ function Profil() {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const response = await axiosClient.get(`/posts/${postId}`);
+                const response = await axiosClient.get(`/posts/random/${postRef}`);
                 if (response.data) {
                     setPost(response.data);
                     setValue('post_id', String(response.data.id));
@@ -47,13 +44,13 @@ function Profil() {
         };
 
         fetchPost();
-    }, [postId, setValue]);
+    }, [postRef, setValue]);
 
     const onSubmit = async (data) => {
         try {
             const formData = new FormData();
             Object.keys(data).forEach(key => {
-                if (key === 'cv' && data[key][0]) {
+                if (key === 'cv') {
                     formData.append(key, data[key][0]);
                 } else {
                     formData.append(key, data[key]);
@@ -84,7 +81,8 @@ function Profil() {
                 <h2 className="text-2xl text-white font-bold mb-4">Renseignez votre profil</h2>
                 <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
                     <div className="mb-4">
-                        <select className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400" {...register("gender")}>
+                        <select className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400" id="gender" {...register("gender")}>
+                            <option value="">Sélectionner Civilité</option>
                             <option value="Mr">Mr</option>
                             <option value="Mme">Mme</option>
                         </select>
@@ -116,7 +114,6 @@ function Profil() {
                         />
                         {errors.cv && <p className="text-red-500 text-sm">{errors.cv.message}</p>}
                     </div>
-
                     <div className="mb-4">
                         <input
                             type="text"

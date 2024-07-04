@@ -19,6 +19,10 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^storage/videos/(.*)$ storage/app/public/videos/$1 [L]
 
+    # Handle CV Requests
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^storage/cvs/(.*)$ storage/app/public/cvs/$1 [L]
+
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f

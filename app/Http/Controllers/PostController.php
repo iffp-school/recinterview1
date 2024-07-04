@@ -117,4 +117,9 @@ class PostController extends Controller
         }
         return response()->json($post->load('questions'), 200);
     }
+    public function getByRandomString($randomString)
+    {
+        $post = Post::where('random_string', $randomString)->firstOrFail();
+        return response()->json($post, 200);
+    }
 }

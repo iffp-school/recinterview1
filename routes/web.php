@@ -39,6 +39,7 @@ Route::post('/posts', [PostController::class, 'store']);
 Route::get('/posts/{id}', [PostController::class, 'show']);
 Route::put('/posts/{id}', [PostController::class, 'update']);
 Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+Route::get('/posts/random/{randomString}', [PostController::class, 'getByRandomString']);
 
 // Routes pour attacher et détacher des questions aux postes
 Route::post('/posts/{id}/questions', [PostController::class, 'attachQuestion']);

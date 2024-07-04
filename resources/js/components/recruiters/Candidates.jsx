@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import SideBar from './SideBar';
 import NavBar from './NavBar';
 import { axiosClient } from '../../api/axios';
-import { FaTrash, FaVideo, FaSort, FaSortUp, FaSortDown, FaFilePdf } from 'react-icons/fa';
+import { FaTrash, FaVideo, FaFilePdf, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import ReactPlayer from 'react-player';
 
 export default function Candidates() {
@@ -58,6 +58,11 @@ export default function Candidates() {
         setCurrentVideoUrl(newVideoUrl);
         setCurrentQuestion(question ? question.question_text : 'Question not found');
         setIsModalOpen(true);
+    };
+
+    const handleDownloadCV = (cvUrl) => {
+        const downloadUrl = `${import.meta.env.VITE_API_BASE_URL}/storage/${cvUrl}`;
+        window.open(downloadUrl, '_blank');
     };
 
     const handlePageChange = (page) => {
@@ -125,12 +130,11 @@ export default function Candidates() {
                                         Poste
                                         {sortBy === 'post.title' ? (sortDirection === 'asc' ? <FaSortUp className="inline ml-1" /> : <FaSortDown className="inline ml-1" />) : <FaSort className="inline ml-1" />}
                                     </th>
-
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                        Réponses
-                                    </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         CV
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                        Réponses
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Actions
@@ -164,6 +168,16 @@ export default function Candidates() {
                                             <div className="text-sm font-medium text-gray-800">{candidate.post.title}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
+                                            {candidate.cv && (
+                                                <button
+                                                    onClick={() => handleDownloadCV(candidate.cv)}
+                                                    className="text-blue-500 hover:text-blue-700"
+                                                >
+                                                    <FaFilePdf size={18} />
+                                                </button>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex flex-wrap gap-2">
                                                 {candidate.responses.map((response, index) => {
                                                     const question = candidate.post.questions[index];
@@ -174,15 +188,6 @@ export default function Candidates() {
                                                     );
                                                 })}
                                             </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            {candidate.cv ? (
-                                                <a href={`${import.meta.env.VITE_API_BASE_URL}/storage/${candidate.cv}`} target="_blank" rel="noopener noreferrer">
-                                                    <FaFilePdf className="text-red-500 text-2xl" />
-                                                </a>
-                                            ) : (
-                                                'Pas de CV'
-                                            )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <button onClick={() => openConfirmModal(candidate.id)} className="text-red-500 hover:text-red-700">

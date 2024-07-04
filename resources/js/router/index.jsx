@@ -31,7 +31,7 @@ export const router = createBrowserRouter([
       { path: RECRUTEUR_DASHBOARD_ROUTE, element: <Dashboard /> },
       { path: RECRUTEUR_BASE_ROUTE + '/posts', element: <Posts /> },
       { path: RECRUTEUR_BASE_ROUTE + '/candidates', element: <Candidates /> },
-      { path: '/profil/:postId', element: <Profil /> }, // Modifier cette ligne
+      { path: '/profil/:postRef', element: <Profil /> },
       { path: '/enregistrement', element: <Enregistrement /> },
     ]
   }

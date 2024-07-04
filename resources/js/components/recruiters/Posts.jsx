@@ -136,9 +136,9 @@ export default function Posts() {
     setShowDetailsModal(false);
   };
 
-  const handleSendLink = (postId) => {
+  const handleSendLink = (randomString) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL
-    const link = `${baseUrl}/profil/${postId}`;
+    const link = `${baseUrl}/profil/${randomString}`;
     setLinkToSend(link);
     setIsLinkModalOpen(true);
   };
@@ -245,7 +245,7 @@ export default function Posts() {
                       </button>
                       <button
                         className="text-blue-600 hover:text-blue-900 mr-2"
-                        onClick={() => handleSendLink(post.id)}
+                        onClick={() => handleSendLink(post.random_string)}
                       >
                         <BsSend />
                       </button>

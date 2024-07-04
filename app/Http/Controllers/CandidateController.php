@@ -59,31 +59,29 @@ class CandidateController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'gender' => 'required|string|in:Mr,Mme',
+        $validatedData = $request->validate([
+            'gender' => 'required|string',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'email' => 'required|email|unique:candidates',
+            'email' => 'required|email',
             'phone' => 'nullable|string',
-            'cv' => 'required|file|mimes:pdf|max:2048',
-            'post_id' => 'required|exists:posts,id'
+            'cv' => 'required|file|mimes:pdf|max:2048', // Validation pour le champ CV
+            'post_id' => 'required|exists:posts,id',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+        $filePath = $request->file('cv')->store('cvs', 'public'); // Stocker le fichier
 
-        $cvPath = $request->file('cv')->store('public/cvs');
-
-        $candidate = Candidate::create([
-            'gender' => $request->input('gender'),
-            'first_name' => $request->input('first_name'),
-            'last_name' => $request->input('last_name'),
-            'email' => $request->input('email'),
-            'phone' => $request->input('phone'),
-            'cv' => $cvPath,
-            'post_id' => $request->input('post_id')
+        $candidate = new Candidate([
+            'gender' => $validatedData['gender'],
+            'first_name' => $validatedData['first_name'],
+            'last_name' => $validatedData['last_name'],
+            'email' => $validatedData['email'],
+            'phone' => $validatedData['phone'],
+            'cv' => $filePath,
+            'post_id' => $validatedData['post_id'],
         ]);
+
+        $candidate->save();
 
         return response()->json($candidate, 201);
     }

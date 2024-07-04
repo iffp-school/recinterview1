@@ -1,16 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request; 
 use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\ResponseController;
 use App\Http\Controllers\RecruiterController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\AuthController;
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:sanctum')->get('/profile', [AuthController::class, 'profile']);
+Route::middleware('auth:sanctum')->put('/profile', [AuthController::class, 'updateProfile']);
+Route::middleware('auth:sanctum')->put('/change-password', [AuthController::class, 'changePassword']);
 
 Route::get('/candidates', [CandidateController::class, 'index']);
 Route::post('/candidates', [CandidateController::class, 'store']);
@@ -18,7 +20,6 @@ Route::get('/candidates/{id}', [CandidateController::class, 'show']);
 Route::put('/candidates/{id}', [CandidateController::class, 'update']);
 Route::delete('/candidates/{id}', [CandidateController::class, 'destroy']);
 Route::get('/candidates/email/{email}', [CandidateController::class, 'getCandidateByEmail']);
-
 
 
 Route::get('/responses', [ResponseController::class, 'index']);

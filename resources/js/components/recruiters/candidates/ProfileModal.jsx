@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { axiosClient } from '../../api/axios';
+import { axiosClient } from '../../../api/axios';
 
 export default function ProfileModal({ isOpen, onClose }) {
     const [activeTab, setActiveTab] = useState('profile');

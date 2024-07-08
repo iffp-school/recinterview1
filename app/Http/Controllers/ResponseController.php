@@ -8,6 +8,7 @@ use App\Models\Candidate;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+
 class ResponseController extends Controller
 {
     // Méthode pour stocker une nouvelle vidéo
@@ -28,7 +29,7 @@ class ResponseController extends Controller
 
         $response->save();
 
-        return response()->json(['message' => 'Video uploaded successfully', 'video_url' => $videoUrl], 200);
+        return response()->json(['message' => 'Video uploaded successfully', 'video_url' => $videoUrl], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     public function index()
@@ -36,7 +37,7 @@ class ResponseController extends Controller
         $videos = Candidate::with('responses')->get()->pluck('responses.*.video_url')->flatten()->toArray();
         $totalVideos = count($videos);
 
-        return response()->json(['videos' => $videos, 'total' => $totalVideos], 200);
+        return response()->json(['videos' => $videos, 'total' => $totalVideos], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     public function executeStorageScript()
@@ -46,7 +47,6 @@ class ResponseController extends Controller
         $process = new Process(['sh', base_path('scripts/recreate_symlink.sh')]);
         $process->run();
 
-        // executes after the command finishes
         if (!$process->isSuccessful()) {
             Log::error('Error executing recreate_symlink.sh', ['output' => $process->getErrorOutput(), 'retval' => $process->getExitCode()]);
             throw new ProcessFailedException($process);
@@ -55,6 +55,9 @@ class ResponseController extends Controller
         $output = $process->getOutput();
         Log::info('Script output', ['output' => $output]);
 
-        return response()->json(['message' => 'Script executed successfully', 'output' => $output], 200);
+        // Nettoyage de l'output pour garantir un encodage correct
+        $cleanOutput = utf8_encode($output);
+
+        return response()->json(['message' => 'Script executed successfully', 'output' => $cleanOutput], 200, [], JSON_UNESCAPED_UNICODE);
     }
 }

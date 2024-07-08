@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "../components/utils/Layout.jsx";
 import Home from "../components/Home.jsx";
-import Login from "../components/recruiters/Login.jsx";
+import Login from "../components/recruiters/candidates/Login.jsx";
 import Dashboard from "../components/recruiters/Dashboard.jsx";
-import Posts from "../components/recruiters/Posts.jsx";
-import Candidates from "../components/recruiters/Candidates.jsx";
+import Posts from "../components/recruiters/posts/Posts.jsx";
+import Candidates from "../components/recruiters/candidates/Candidates.jsx";
 import Profil from "../components/candidates/Profil.jsx";
 import Enregistrement from "../components/candidates/Enregistrement.jsx";
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { axiosClient } from '../../api/axios';
-import ProfileModal from './ProfileModal'; // Assurez-vous que le chemin est correct
+import ProfileModal from './candidates/ProfileModal'; // Assurez-vous que le chemin est correct
 
 export default function NavBar() {
     const navigate = useNavigate();

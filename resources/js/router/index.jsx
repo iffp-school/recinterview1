@@ -1,9 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "../components/utils/Layout.jsx";
 import Home from "../components/Home.jsx";
-import Login from "../components/recruiters/candidates/Login.jsx";
+import Login from "../components/recruiters/Login.jsx";
 import Dashboard from "../components/recruiters/Dashboard.jsx";
 import Posts from "../components/recruiters/posts/Posts.jsx";
+import NewPost from "../components/recruiters/posts/NewPost.jsx";
 import Candidates from "../components/recruiters/candidates/Candidates.jsx";
 import Profil from "../components/candidates/Profil.jsx";
 import Enregistrement from "../components/candidates/Enregistrement.jsx";
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
       { path: '/login', element: <Login /> },
       { path: RECRUTEUR_DASHBOARD_ROUTE, element: <Dashboard /> },
       { path: RECRUTEUR_BASE_ROUTE + '/posts', element: <Posts /> },
+      { path: RECRUTEUR_BASE_ROUTE + '/new-post', element: <NewPost /> },
       { path: RECRUTEUR_BASE_ROUTE + '/candidates', element: <Candidates /> },
       { path: '/profil/:postRef', element: <Profil /> },
       { path: '/enregistrement', element: <Enregistrement /> },

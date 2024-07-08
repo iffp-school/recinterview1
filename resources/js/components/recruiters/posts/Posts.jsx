@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, Routes, Route } from 'react-router-dom';
 import SideBar from '../SideBar';
 import NavBar from '../NavBar';
 import { axiosClient } from '../../../api/axios';
@@ -9,6 +10,7 @@ import ConfirmationModal from '../common/ConfirmationModal';
 import PostSearchBar from './PostSearchBar';
 import Pagination from '../common/Pagination';
 import LinkModal from './LinkModal';
+import NewPost from './NewPost';
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);
@@ -26,6 +28,7 @@ export default function Posts() {
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [linkToSend, setLinkToSend] = useState('');
   const [isLinkCopied, setIsLinkCopied] = useState(false);
+  const navigate = useNavigate();
 
   const fetchPosts = (page, term = '', sortBy = '', sortDirection = 'asc') => {
     axiosClient.get('/posts', {
@@ -171,26 +174,31 @@ export default function Posts() {
       <SideBar />
       <div className="w-full">
         <NavBar />
-        <div className="p-4">
-          <PostSearchBar
-            searchTerm={searchTerm}
-            handleSearch={handleSearch}
-            onAddClick={() => setIsModalOpen(true)}
-          />
-          <PostTable
-            posts={posts}
-            sortBy={sortBy}
-            sortDirection={sortDirection}
-            handleSort={handleSort}
-            setCurrentPost={setCurrentPost}
-            setIsModalOpen={setIsModalOpen}
-            setPostIdToDelete={setPostIdToDelete}
-            setShowConfirmationModal={setShowConfirmationModal}
-            handleDetails={handleDetails}
-            handleSendLink={handleSendLink}
-          />
-          <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
-        </div>
+        <Routes>
+          <Route path="/" element={
+            <div className="p-4">
+              <PostSearchBar
+                searchTerm={searchTerm}
+                handleSearch={handleSearch}
+                onAddClick={() => navigate('/recruiter/new-post')}
+              />
+              <PostTable
+                posts={posts}
+                sortBy={sortBy}
+                sortDirection={sortDirection}
+                handleSort={handleSort}
+                setCurrentPost={setCurrentPost}
+                setIsModalOpen={setIsModalOpen}
+                setPostIdToDelete={setPostIdToDelete}
+                setShowConfirmationModal={setShowConfirmationModal}
+                handleDetails={handleDetails}
+                handleSendLink={handleSendLink}
+              />
+              <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
+            </div>
+          } />
+          <Route path="/add-post-info" element={<NewPost />} />
+        </Routes>
       </div>
       <PostModal
         isModalOpen={isModalOpen}

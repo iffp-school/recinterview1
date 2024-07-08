@@ -1,13 +1,13 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../utils/form.jsx";
-import { Input } from "../../utils/input.jsx";
-import { Button } from "../../utils/button.jsx";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../utils/form.jsx";
+import { Input } from "../utils/input.jsx";
+import { Button } from "../utils/button.jsx";
 import { useNavigate } from "react-router-dom";
-import { redirectToDashboard } from "../../../router/index.jsx";
+import { redirectToDashboard } from "../../router/index.jsx";
 import { Loader } from "lucide-react";
-import { axiosClient } from "../../../api/axios.js";
+import { axiosClient } from "../../api/axios.js";
 import { useState } from "react";
 
 // Schéma de validation pour le formulaire

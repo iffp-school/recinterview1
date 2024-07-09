@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export default function SideBar() {
   return (
     <div className="w-full md:w-1/4 bg-gray-900 p-4 flex flex-col items-center md:items-start">
-      <Link to="/recruiter/dashboard" >
+      <Link to="/recruiter/home" >
         <h1 className="text-4xl font-bold mb-4 text-center md:text-left">
           Rec<span className="text-blue-500">Inter</span>View
         </h1>

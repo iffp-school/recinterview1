@@ -96,11 +96,11 @@ const PostModal = ({
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			title: post.title,
-			description: post.description,
+			title: post.title || '',
+			description: post.description || '',
 			question_text: '',
-			preparation_time: 60,
-			response_time: 30,
+			preparation_time: 30,
+			response_time: 90,
 		},
 	});
 
@@ -142,7 +142,7 @@ const PostModal = ({
 													type="text"
 													placeholder="Titre"
 													{...field}
-													value={field.value || post.title}
+													value={field.value !== '' ? field.value : post.title} // Ensure value is not empty
 													onChange={(e) => {
 														field.onChange(e);
 														setCurrentPost({ ...post, title: e.target.value });
@@ -165,7 +165,7 @@ const PostModal = ({
 													className="border border-gray-300 rounded px-4 py-2 mb-2 w-full"
 													rows="3"
 													{...field}
-													value={field.value || post.description}
+													value={field.value !== '' ? field.value : post.description} // Ensure value is not empty
 													onChange={(e) => {
 														field.onChange(e);
 														setCurrentPost({ ...post, description: e.target.value });
@@ -176,6 +176,7 @@ const PostModal = ({
 										</FormItem>
 									)}
 								/>
+
 								<FormField
 									control={control}
 									name="question_text"

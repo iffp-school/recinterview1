@@ -123,7 +123,7 @@ function Profil() {
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
                             id="post_title"
                             placeholder="Titre du poste"
-                            value={post ? post.title : ''}
+                            value={post ? post.title : ''} 
                             disabled
                         />
                         <input type="hidden" {...register("post_id")} />
@@ -146,7 +146,7 @@ function Profil() {
             >
                 <div className="bg-white rounded-lg p-8 shadow-lg max-w-4xl w-full transform transition-transform duration-300 ease-in-out translate-y-0">
                     <h2 className="text-2xl font-bold mb-4 text-center">Votre entretien vidéo différé</h2>
-                    <p className="text-center mb-8">{post ? post.title : 'STAGIAIRE RH H/F'} - NANTERRE - IFFP CFA - STAGE</p>
+                    <p className="text-center mb-8">{post ? post.title : 'Post titre H/F'}</p>
                     <div className="flex flex-wrap justify-around mb-4 text-blue-500">
                         <div className="text-center m-2">
                             <FaCamera className="text-3xl mb-2" />

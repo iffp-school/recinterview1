@@ -223,19 +223,27 @@ function Enregistrement() {
                                 </div>
                             </div>
                             <div className="flex justify-center">
-                                {isPractice ? (
+                                {recording ? (
                                     <button
-                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-2 rounded"
-                                        onClick={handlePracticeStop}
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mx-2 rounded"
+                                        onClick={stopRecording}
                                     >
-                                        Terminer le test
+                                        Arrêter l'enregistrement
                                     </button>
                                 ) : (
                                     <button
-                                        className={`bg-${recording ? 'green' : 'blue'}-500 hover:bg-${recording ? 'green' : 'blue'}-700 text-white font-bold py-2 px-4 mx-2 rounded`}
-                                        onClick={recording ? stopRecording : startRecording}
+                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-2 rounded"
+                                        onClick={startRecording}
                                     >
-                                        {recording ? 'Soumettre' : 'Enregistrer'}
+                                        Recommencer l'enregistrement
+                                    </button>
+                                )}
+                                {!recording && (
+                                    <button
+                                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mx-2 rounded"
+                                        onClick={handleDataAvailable}
+                                    >
+                                        Passer à la question {currentQuestionIndex + 1}/{post.questions.length}
                                     </button>
                                 )}
                                 {!recording && !isPractice && attemptsLeft > 0 && (

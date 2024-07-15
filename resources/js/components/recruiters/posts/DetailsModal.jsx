@@ -1,6 +1,14 @@
 import React from 'react';
 import Modal from 'react-modal';
 
+const convertSecondsToMinutes = (seconds) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  if (minutes === 0) return `${remainingSeconds} secondes`;
+  if (remainingSeconds === 0) return `${minutes} minutes`;
+  return `${minutes} minutes et ${remainingSeconds} secondes`;
+};
+
 const DetailsModal = ({ showDetailsModal, handleCloseDetailsModal, currentPost }) => (
   <Modal
     isOpen={showDetailsModal}
@@ -31,8 +39,8 @@ const DetailsModal = ({ showDetailsModal, handleCloseDetailsModal, currentPost }
         {currentPost.questions && currentPost.questions.map((question, index) => (
           <li key={index} className="text-gray-800 mb-2">
             Question {index + 1}: {question.question_text} <br />
-            Temps de préparation: {question.preparation_time} minutes <br />
-            Temps de réponse: {question.response_time} minutes
+            Temps de préparation: {convertSecondsToMinutes(question.preparation_time)} <br />
+            Temps de réponse: {convertSecondsToMinutes(question.response_time)}
           </li>
         ))}
       </ul>

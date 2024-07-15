@@ -17,6 +17,8 @@ function Enregistrement() {
     const [post, setPost] = useState(null);
     const [candidateId, setCandidateId] = useState(null);
     const [isFinalModalOpen, setIsFinalModalOpen] = useState(false);
+    const [isPractice, setIsPractice] = useState(true);
+    const [attemptsLeft, setAttemptsLeft] = useState(3);
 
     const [preparationTime, setPreparationTime] = useState(0);
     const [responseTime, setResponseTime] = useState(0);
@@ -149,6 +151,28 @@ function Enregistrement() {
             });
     };
 
+    const handlePracticeStart = () => {
+        setIsPractice(true);
+        setRecording(false);
+        setElapsedTime(0);
+        startRecording();
+    };
+
+    const handlePracticeStop = () => {
+        stopRecording();
+        setIsPractice(false);
+    };
+
+    const handleReRecord = () => {
+        if (attemptsLeft > 1) {
+            setAttemptsLeft(attemptsLeft - 1);
+            setElapsedTime(0);
+            setRecording(false);
+            startRecording();
+        } else {
+            alert('Vous avez atteint le nombre maximum de tentatives.');
+        }
+    };
 
     if (!post || !candidateId) {
         return <div className="text-white">Loading...</div>;
@@ -199,12 +223,27 @@ function Enregistrement() {
                                 </div>
                             </div>
                             <div className="flex justify-center">
-                                {currentQuestionIndex < post.questions.length && (
+                                {isPractice ? (
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-2 rounded"
+                                        onClick={handlePracticeStop}
+                                    >
+                                        Terminer le test
+                                    </button>
+                                ) : (
                                     <button
                                         className={`bg-${recording ? 'green' : 'blue'}-500 hover:bg-${recording ? 'green' : 'blue'}-700 text-white font-bold py-2 px-4 mx-2 rounded`}
                                         onClick={recording ? stopRecording : startRecording}
                                     >
                                         {recording ? 'Soumettre' : 'Enregistrer'}
+                                    </button>
+                                )}
+                                {!recording && !isPractice && attemptsLeft > 0 && (
+                                    <button
+                                        className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 mx-2 rounded"
+                                        onClick={handleReRecord}
+                                    >
+                                        Ré-enregistrer ({attemptsLeft} tentatives restantes)
                                     </button>
                                 )}
                             </div>
@@ -219,7 +258,7 @@ function Enregistrement() {
                 className="fixed inset-0 flex items-center justify-center z-50"
                 overlayClassName="fixed inset-0 bg-black bg-opacity-50"
                 contentLabel="Fin de l'entretien"
-                closeTimeoutMS={300}
+                closeTimeoutMS={300}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
                 ariaHideApp={false}
             >
                 <div className="bg-white rounded-lg p-8 shadow-lg max-w-md w-full transform transition-transform duration-300 ease-in-out translate-y-0">

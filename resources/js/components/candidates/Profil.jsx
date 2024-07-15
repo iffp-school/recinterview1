@@ -5,6 +5,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { axiosClient } from '../../api/axios';
 import Modal from 'react-modal';
+import { FaCamera, FaMicrophone, FaClock } from 'react-icons/fa';
+import { BsQuestionCircle } from 'react-icons/bs';
+import { SiGooglechrome, SiFirefoxbrowser } from 'react-icons/si';
 
 const formSchema = z.object({
     gender: z.enum(['Mr', 'Mme'], "Veuillez sélectionner une civilité"),
@@ -141,20 +144,52 @@ function Profil() {
                 closeTimeoutMS={300}
                 ariaHideApp={false}
             >
-                <div className="bg-white rounded-lg p-8 shadow-lg max-w-md w-full transform transition-transform duration-300 ease-in-out translate-y-0">
-                    <h2 className="text-2xl font-bold mb-4">Profil Enregistré</h2>
-                    <p className="mb-4 text-gray-700">
-                        Votre profil a été enregistré avec succès. Bienvenue dans notre processus d'entretien asynchrone.
-                        Prenez votre temps pour enregistrer vos réponses aux questions suivantes. Suivez les instructions fournies pour un enregistrement réussi.
-                        Vous trouverez une suite de questions suivie de vos réponses enregistrées. Les questions du recruteur sont présentées sous forme de textes.
-                        Après avoir enregistré une réponse, vous aurez la possibilité de la réenregistrer si nécessaire avant de la soumettre.
+                <div className="bg-white rounded-lg p-8 shadow-lg max-w-4xl w-full transform transition-transform duration-300 ease-in-out translate-y-0">
+                    <h2 className="text-2xl font-bold mb-4 text-center">Votre entretien vidéo différé</h2>
+                    <p className="text-center mb-8">{post ? post.title : 'STAGIAIRE RH H/F'} - NANTERRE - IFFP CFA - STAGE</p>
+                    <div className="flex flex-wrap justify-around mb-4 text-blue-500">
+                        <div className="text-center m-2">
+                            <FaCamera className="text-3xl mb-2" />
+                            <p>1 webcam</p>
+                        </div>
+                        <div className="text-center m-2">
+                            <FaMicrophone className="text-3xl mb-2" />
+                            <p>1 microphone</p>
+                        </div>
+                        <div className="text-center m-2">
+                            <div className="flex justify-center items-center space-x-2">
+                                <SiGooglechrome className="text-3xl mb-2" />
+                                <SiFirefoxbrowser className="text-3xl mb-2" />
+                            </div>
+                            <p>Chrome ou Firefox</p>
+                        </div>
+                    </div>
+                    <p className="mb-4 text-gray-700 text-center">
+                        Attention, pour enregistrer votre entretien vidéo différé, votre ordinateur doit être équipé de :
                     </p>
-                    <button
-                        className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                        onClick={startRecording}
-                    >
-                        Démarrer l'enregistrement
-                    </button>
+                    <ol className="list-decimal list-inside mb-4 text-left text-gray-700 mx-8">
+                        <li className="mb-2">Une première question fictive va vous être posée afin de vous présenter les conditions d'enregistrement.</li>
+                        <li className="mb-2">Chaque question de l'entretien vidéo différé va vous être présentée pendant quelques instants. Sans action de votre part, l'enregistrement démarrera automatiquement après ce laps de temps.</li>
+                        <li className="mb-2">Vous avez la possibilité de relancer l'enregistrement jusqu'à 3 fois par question.</li>
+                    </ol>
+                    <div className="flex justify-center items-center mb-8 text-red-500">
+                        <div className="flex items-center mr-8">
+                            <BsQuestionCircle className="text-3xl" />
+                            <span className="ml-2 text-lg">Question</span>
+                        </div>
+                        <div className="flex items-center">
+                            <FaClock className="text-3xl" />
+                            <span className="ml-2 text-lg">3 mn</span>
+                        </div>
+                    </div>
+                    <div className="flex justify-center">
+                        <button
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            onClick={startRecording}
+                        >
+                            Testez-vous !
+                        </button>
+                    </div>
                 </div>
             </Modal>
         </div>

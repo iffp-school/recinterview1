@@ -1,18 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import SideBar from './SideBar';
 import NavBar from './NavBar';
+import SideBar from './SideBar';
 
-const HomeRec = () => {
+const HomeRec = ({ theme, toggleTheme }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="flex flex-col md:flex-row h-screen bg-gray-800 text-white">
-            <SideBar />
+        <div className={`${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} flex flex-col md:flex-row h-screen transition-colors duration-300`}>
+            <SideBar theme={theme} />
             <div className="w-full">
-                <NavBar />
+                <NavBar theme={theme} toggleTheme={toggleTheme} />
                 <div className="p-4">
-                    <div className="bg-white p-6 rounded-lg shadow-md text-black max-w-4xl mx-auto">
+                    <div className={`${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} p-6 rounded-lg shadow-md max-w-4xl mx-auto transition-colors duration-300`}>
                         <h2 className="text-2xl font-bold text-blue-500 mb-4">
                             Evaluez le potentiel de vos candidats grâce aux entretiens vidéos différés
                         </h2>
@@ -27,28 +27,28 @@ const HomeRec = () => {
                             </div>
                             <div className="flex flex-col w-full md:w-2/5 items-center justify-center">
                                 <div className="text-center mb-4">
-                                    <p className="text-sm text-gray-600">
+                                    <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-600'}`}>
                                         Pour créer un entretien vidéo différé, paramétrez un questionnaire auquel le candidat répondra devant sa webcam.
                                     </p>
                                     <button
-                                        className="bg-blue-500 text-white py-2 px-4 rounded-md mt-2"
+                                        className="bg-blue-500 text-white py-2 px-4 rounded-md mt-2 hover:bg-blue-600 transition-colors duration-300"
                                         onClick={() => navigate('/recruiter/new-post')}
                                     >
                                         Créer un poste
                                     </button>
                                 </div>
                                 <div className="text-center mb-4">
-                                    <p className="text-sm text-gray-600">
+                                    <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-600'}`}>
                                         Vous voulez accéder à l'ensemble de vos questionnaires ?
                                     </p>
                                     <button
-                                        className="bg-blue-500 text-white py-2 px-4 rounded-md mt-2"
+                                        className="bg-blue-500 text-white py-2 px-4 rounded-md mt-2 hover:bg-blue-600 transition-colors duration-300"
                                         onClick={() => navigate('/recruiter/posts')}
                                     >
                                         Liste des postes
                                     </button>
                                 </div>
-                                <p className="text-sm text-gray-600 text-center">
+                                <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-600'} text-center`}>
                                     Une fois l'entretien vidéo différé réalisé, vous pouvez le visionner depuis la fiche candidat.
                                 </p>
                             </div>

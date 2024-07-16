@@ -9,6 +9,7 @@ import { redirectToDashboard } from "../../router/index.jsx";
 import { Loader } from "lucide-react";
 import { axiosClient } from "../../api/axios.js";
 import { useState } from "react";
+import { FaSun, FaMoon } from "react-icons/fa";
 
 // Schéma de validation pour le formulaire
 const formSchema = z.object({
@@ -19,6 +20,7 @@ const formSchema = z.object({
 // Composant principal de la page de connexion
 export default function Login() {
   const navigate = useNavigate(); // Hook de navigation
+  const [theme, setTheme] = useState('light'); // Ajout de l'état du thème
   const [errorMessage, setErrorMessage] = useState('');
 
   // Initialisation du formulaire avec le résolveur Zod
@@ -44,11 +46,20 @@ export default function Login() {
     }
   };
 
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
-    <div className="min-h-screen bg-gray-800 flex items-center justify-center px-4">
+    <div className={`${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} min-h-screen flex items-center justify-center transition-colors duration-300 px-4`}>
+      <div className="absolute top-4 right-4">
+        <button onClick={toggleTheme} className="text-lg font-semibold">
+          {theme === 'dark' ? <FaSun /> : <FaMoon />}
+        </button>
+      </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-md bg-gray-900 p-8 rounded-lg shadow-md">
-          <h2 className="text-2xl text-white font-bold text-center mb-6">Connexion</h2>
+        <form onSubmit={form.handleSubmit(onSubmit)} className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} w-full max-w-md p-8 rounded-lg shadow-md transition-colors duration-300`}>
+          <h2 className="text-2xl font-bold text-center mb-6">Connexion</h2>
           
           {/* Affichage des erreurs globales */}
           {errorMessage && !errors.password && (
@@ -63,10 +74,15 @@ export default function Login() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">Email</FormLabel>
+                <FormLabel className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Email" {...field} />
+                  <Input placeholder="Email" className={`${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'} p-2 rounded-lg`} {...field} />
                 </FormControl>
+                {errors.email && (
+                  <FormMessage className="text-red-500">
+                    {errors.email.message}
+                  </FormMessage>
+                )}
               </FormItem>
             )}
           />
@@ -77,9 +93,9 @@ export default function Login() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">Password</FormLabel>
+                <FormLabel className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Password" {...field} />
+                  <Input type="password" placeholder="Password" className={`${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-900'} p-2 rounded-lg`} {...field} />
                 </FormControl>
                 {errors.password && (
                   <FormMessage className="text-red-500">
@@ -91,9 +107,11 @@ export default function Login() {
           />
 
           {/* Bouton de soumission du formulaire */}
-          <Button className="bg-blue-500 mt-4 w-full" disabled={isSubmitting} type="submit">
-            {isSubmitting && <Loader className="mx-2 my-2 animate-spin" />} {' '} Login
-          </Button>
+          <div className="flex justify-center mt-4">
+            <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow" disabled={isSubmitting} type="submit">
+              {isSubmitting && <Loader className="mx-2 my-2 animate-spin" />} {' '} Login
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

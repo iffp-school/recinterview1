@@ -1,10 +1,14 @@
-import {Outlet} from "react-router-dom";
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import NavBar from '../recruiters/NavBar';
 
-export default function Layout() {
+const Layout = ({ theme, toggleTheme }) => {
+    return (
+        <div>
+            <NavBar theme={theme} toggleTheme={toggleTheme} />
+            <Outlet />
+        </div>
+    );
+};
 
-  return <>
-    <main >
-      <Outlet/>
-    </main>
-  </>
-}
+export default Layout;

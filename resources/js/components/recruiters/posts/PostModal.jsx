@@ -67,11 +67,11 @@ const PostModal = ({
 		} else {
 			setCurrentPost({ ...post, questions: [...post.questions, newQuestion] });
 		}
-		setNewQuestion({ question_text: '', preparation_time: 60, response_time: 30 });
+		setNewQuestion({ question_text: '', preparation_time: 30, response_time: 90 });
 	};
 
 	// Local state for new question input
-	const [newQuestion, setNewQuestion] = useState({ question_text: '', preparation_time: 60, response_time: 30 });
+	const [newQuestion, setNewQuestion] = useState({ question_text: '', preparation_time: 30, response_time: 90 });
 
 	const handleNewQuestionChange = (field, value) => {
 		setNewQuestion({ ...newQuestion, [field]: value });
@@ -79,7 +79,7 @@ const PostModal = ({
 
 	const handleAddQuestion = () => {
 		const totalDurationWithNewQuestion = totalDuration + parseInt(newQuestion.preparation_time) + parseInt(newQuestion.response_time);
-		if (totalDurationWithNewQuestion > 1200) { // 1200 seconds = 20 minutes
+		if (totalDurationWithNewQuestion > 900) { // 1200 seconds = 20 minutes
 			setErrorMessage("La durée totale ne peut pas dépasser 20 minutes !");
 			return;
 		}
@@ -325,7 +325,7 @@ const PostModal = ({
 								<p className="m-2 text-sm">
 									Durée totale :{' '}
 									<span className="text-blue-500">{totalMinutes}</span> min{' '}
-									<span className="text-blue-500">{totalSeconds}</span> sec / 20 minutes
+									<span className="text-blue-500">{totalSeconds}</span> sec / 15 minutes
 								</p>
 								<Button
 									className="bg-blue-500 text-white px-4 py-2 rounded-md"

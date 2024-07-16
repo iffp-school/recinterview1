@@ -1,11 +1,10 @@
 import React from 'react';
-import { Bar, Line, Pie } from 'react-chartjs-2';
+import { Bar, Pie } from 'react-chartjs-2';
 import SideBar from './SideBar';
 import NavBar from './NavBar';
 import 'chart.js/auto';
 
-export default function Dashboard() {
-  // Exemple de données pour les graphiques
+export default function Dashboard({ theme, toggleTheme }) {
   const candidatesPerPostData = {
     labels: ['Poste 1', 'Poste 2', 'Poste 3', 'Poste 4'],
     datasets: [
@@ -27,42 +26,40 @@ export default function Dashboard() {
     ],
   };
 
-
-  // Options pour les graphiques avec texte en blanc
   const chartOptions = {
     scales: {
       x: {
         ticks: {
-          color: 'white',
+          color: theme === 'dark' ? 'white' : 'black',
         },
       },
       y: {
         ticks: {
-          color: 'white',
+          color: theme === 'dark' ? 'white' : 'black',
         },
       },
     },
     plugins: {
       legend: {
         labels: {
-          color: 'white',
+          color: theme === 'dark' ? 'white' : 'black',
         },
       },
     },
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-gray-800 text-white">
-      <SideBar />
+    <div className={`${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} flex flex-col md:flex-row h-screen transition-colors duration-300`}>
+      <SideBar theme={theme} />
       <div className="w-full">
-        <NavBar />
+        <NavBar theme={theme} toggleTheme={toggleTheme} />
         <div className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
-            <div className="bg-gray-700 text-white shadow-md rounded px-8 pt-6 pb-8 mb-4 h-96">
+            <div className={`${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} shadow-md rounded px-8 pt-6 pb-8 mb-4 h-96`}>
               <h5 className="text-lg font-bold mb-4">Candidats par poste</h5>
               <Bar data={candidatesPerPostData} options={chartOptions} />
             </div>
-            <div className="bg-gray-700 text-white shadow-md rounded px-8 pt-6 pb-8 mb-4 h-96">
+            <div className={`${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} shadow-md rounded px-8 pt-6 pb-8 mb-4 h-96`}>
               <h5 className="text-lg font-bold mb-4">Taux de réussite des candidats</h5>
               <Pie data={successRatesData} options={chartOptions} />
             </div>

@@ -19,12 +19,20 @@ const LinkModal = ({ isLinkModalOpen, setIsLinkModalOpen, linkToSend, handleCopy
       <div className="border border-gray-300 rounded px-4 py-2 mb-4 w-full bg-gray-100 text-gray-800">
         {linkToSend}
       </div>
-      <button
-        className={`px-4 py-2 rounded-md ${isLinkCopied ? 'bg-green-600' : 'bg-blue-600'} text-white`}
-        onClick={handleCopyLink}
-      >
-        {isLinkCopied ? 'Lien copié!' : 'Copier le lien'}
-      </button>
+      <div className="flex space-x-4">
+        <button
+          className={`px-4 py-2 rounded-md ${isLinkCopied ? 'bg-green-600' : 'bg-blue-600'} text-white`}
+          onClick={handleCopyLink}
+        >
+          {isLinkCopied ? 'Lien copié!' : 'Copier le lien'}
+        </button>
+        <button
+          className="px-4 py-2 rounded-md bg-blue-600 text-white"
+          onClick={() => window.open(linkToSend, '_blank')}
+        >
+          Ouvrir le lien
+        </button>
+      </div>
     </div>
   </Modal>
 );

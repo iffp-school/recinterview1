@@ -8,7 +8,7 @@ import ConfirmationModal from '../common/ConfirmationModal';
 import CandidateSearchBar from './CandidateSearchBar';
 import Pagination from '../common/Pagination';
 
-export default function Candidates() {
+export default function Candidates({ theme, toggleTheme }) {
   const [candidates, setCandidates] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -46,7 +46,7 @@ export default function Candidates() {
 
   const handleSearch = (e) => {
     setRecherche(e.target.value.toLowerCase());
-    setCurrentPage(1); // Reset to first page when search term changes
+    setCurrentPage(1);
   };
 
   const handleSort = (column) => {
@@ -94,10 +94,10 @@ export default function Candidates() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-gray-800 text-white">
-      <SideBar />
+    <div className={`${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} flex flex-col md:flex-row h-screen transition-colors duration-300`}>
+      <SideBar theme={theme} />
       <div className="w-full">
-        <NavBar />
+        <NavBar theme={theme} toggleTheme={toggleTheme} />
         <div className="p-4">
           <CandidateSearchBar
             searchTerm={recherche}

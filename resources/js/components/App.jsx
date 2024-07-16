@@ -1,15 +1,63 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../../css/app.css';
-import { RouterProvider } from 'react-router-dom';
-import { router } from '../router/index.jsx';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import Home from './Home';
+import HomeRec from './recruiters/HomeRec';
+import Login from './recruiters/Login';
+import Dashboard from './recruiters/Dashboard';
+import Posts from './recruiters/posts/Posts';
+import NewPost from './recruiters/posts/NewPost';
+import Candidates from './recruiters/candidates/Candidates';
+import Profil from './candidates/Profil';
+import Enregistrement from './candidates/Enregistrement';
 
 function App() {
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+    const [theme, setTheme] = useState('light');
+
+    const toggleTheme = () => {
+        setTheme((prevTheme) => (prevTheme === 'dark' ? 'light' : 'dark'));
+    };
+
+    const router = createBrowserRouter([
+        {
+            path: '/',
+            element: <Home theme={theme} toggleTheme={toggleTheme} />
+        },
+        {
+            path: '/login',
+            element: <Login theme={theme} toggleTheme={toggleTheme} />
+        },
+        {
+            path: '/recruiter/home',
+            element: <HomeRec theme={theme} toggleTheme={toggleTheme} />
+        },
+        {
+            path: '/recruiter/dashboard',
+            element: <Dashboard theme={theme} toggleTheme={toggleTheme} />
+        },
+        {
+            path: '/recruiter/posts',
+            element: <Posts theme={theme} toggleTheme={toggleTheme} />
+        },
+        {
+            path: '/recruiter/new-post',
+            element: <NewPost theme={theme} toggleTheme={toggleTheme} />
+        },
+        {
+            path: '/recruiter/candidates',
+            element: <Candidates theme={theme} toggleTheme={toggleTheme} />
+        },
+        {
+            path: '/profil/:postRef',
+            element: <Profil theme={theme} toggleTheme={toggleTheme} />
+        },
+        {
+            path: '/enregistrement',
+            element: <Enregistrement theme={theme} toggleTheme={toggleTheme} />
+        }
+    ]);
+
+    return <RouterProvider router={router} />;
 }
 
 export default App;
-

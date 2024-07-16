@@ -12,7 +12,7 @@ import Pagination from '../common/Pagination';
 import LinkModal from './LinkModal';
 import NewPost from './NewPost';
 
-export default function Posts() {
+export default function Posts({ theme, toggleTheme }) {
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -55,7 +55,7 @@ export default function Posts() {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
-    setCurrentPage(1); // Reset to first page when search term changes
+    setCurrentPage(1);
   };
 
   const handleSort = (column) => {
@@ -70,7 +70,7 @@ export default function Posts() {
       title: currentPost.title,
       description: currentPost.description,
       questions: currentPost.questions,
-      recruiter_id: 1 // Remplacez ceci par l'ID réel du recruteur
+      recruiter_id: 1
     };
 
     axiosClient.post('/posts', postData)
@@ -92,7 +92,7 @@ export default function Posts() {
       title: currentPost.title,
       description: currentPost.description,
       questions: currentPost.questions,
-      recruiter_id: 1 // Remplacez ceci par l'ID réel du recruteur
+      recruiter_id: 1
     };
 
     axiosClient.put(`/posts/${currentPost.id}`, postData)
@@ -152,7 +152,7 @@ export default function Posts() {
   const handleCopyLink = () => {
     navigator.clipboard.writeText(linkToSend);
     setIsLinkCopied(true);
-    setTimeout(() => setIsLinkCopied(false), 2000); // Réinitialise l'état après 2 secondes
+    setTimeout(() => setIsLinkCopied(false), 2000);
   };
 
   const addQuestion = () => {
@@ -170,10 +170,10 @@ export default function Posts() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-gray-800 text-white">
-      <SideBar />
+    <div className={`${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} flex flex-col md:flex-row h-screen transition-colors duration-300`}>
+      <SideBar theme={theme} />
       <div className="w-full">
-        <NavBar />
+        <NavBar theme={theme} toggleTheme={toggleTheme} />
         <Routes>
           <Route path="/" element={
             <div className="p-4">

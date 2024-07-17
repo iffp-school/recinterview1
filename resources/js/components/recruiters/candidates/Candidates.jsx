@@ -111,6 +111,7 @@ export default function Candidates({ theme, toggleTheme }) {
             handleVideoClick={handleVideoClick}
             handleDownloadCV={handleDownloadCV}
             openConfirmModal={openConfirmModal}
+            fetchCandidates={() => fetchCandidates(currentPage, recherche, sortBy, sortDirection)} 
           />
           <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
         </div>

@@ -18,7 +18,8 @@ class Candidate extends Model
         'phone',
         'cv',
         'post_id',
-        'gender'
+        'gender',
+        'rating' 
     ];
 
     public function post()

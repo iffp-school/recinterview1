@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CandidateController extends Controller
 {
-    // app/Http/Controllers/CandidateController.php
-
     public function index(Request $request)
     {
         $query = Candidate::with(['post.questions', 'responses']);
@@ -29,7 +27,7 @@ class CandidateController extends Controller
         if ($request->has('sort_by') && $request->has('sort_direction') && !empty($request->sort_by) && !empty($request->sort_direction)) {
             $sortBy = $request->sort_by;
             $sortDirection = $request->sort_direction;
-            $sortableColumns = ['first_name', 'last_name', 'email', 'phone', 'created_at'];
+            $sortableColumns = ['first_name', 'last_name', 'email', 'phone', 'created_at', 'rating']; // Add 'rating' here
 
             if ($sortBy === 'post.title') {
                 $query->join('posts', 'candidates.post_id', '=', 'posts.id')
@@ -126,5 +124,23 @@ class CandidateController extends Controller
         } else {
             return response()->json(['message' => 'No candidate found for this email'], 404);
         }
+    }
+
+
+    public function updateRating(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'rating' => 'required|integer|min:0|max:5',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $candidate = Candidate::findOrFail($id);
+        $candidate->rating = $request->input('rating');
+        $candidate->save();
+
+        return response()->json($candidate, 200);
     }
 }

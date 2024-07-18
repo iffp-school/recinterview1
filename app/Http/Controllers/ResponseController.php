@@ -16,7 +16,7 @@ class ResponseController extends Controller
     {
         $request->validate([
             'candidate_id' => 'required|exists:candidates,id',
-            'video' => 'required|file|mimes:mp4,mov,mkv,ogg,qt|max:20000'
+            'video' => 'required|file|max:20000' 
         ]);
 
         $videoPath = $request->file('video')->store('public/videos');
@@ -31,6 +31,7 @@ class ResponseController extends Controller
 
         return response()->json(['message' => 'Video uploaded successfully', 'video_url' => $videoUrl], 200, [], JSON_UNESCAPED_UNICODE);
     }
+
 
     public function index()
     {
@@ -53,11 +54,14 @@ class ResponseController extends Controller
         }
 
         $output = $process->getOutput();
-        Log::info('Script output', ['output' => $output]);
+        Log::info('Script raw output', ['output' => $output]);
 
-        // Nettoyage de l'output pour garantir un encodage correct
-        $cleanOutput = utf8_encode($output);
+        // Assurez-vous que l'output est bien encodé en UTF-8
+        $cleanOutput = mb_convert_encoding($output, 'UTF-8', 'UTF-8');
+        Log::info('Script cleaned output', ['output' => $cleanOutput]);
 
-        return response()->json(['message' => 'Script executed successfully', 'output' => $cleanOutput], 200, [], JSON_UNESCAPED_UNICODE);
+        // Retourner une réponse texte simplifiée
+        return response('Script executed successfully', 200)
+            ->header('Content-Type', 'text/plain');
     }
 }

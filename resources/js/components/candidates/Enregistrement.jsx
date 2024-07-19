@@ -1,4 +1,3 @@
-// pages/Enregistrement.jsx
 import React, { useRef, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaSun, FaMoon } from 'react-icons/fa';
@@ -19,15 +18,14 @@ function Enregistrement() {
   const [candidateId, setCandidateId] = useState(null);
   const [isFinalModalOpen, setIsFinalModalOpen] = useState(false);
   const [isPractice, setIsPractice] = useState(true);
-  const [attemptsLeft, setAttemptsLeft] = useState(3);
+  const [attemptsLeft, setAttemptsLeft] = useState([]);
   const [preparationTime, setPreparationTime] = useState(30);
   const [responseTime, setResponseTime] = useState(120);
   const [isPreparation, setIsPreparation] = useState(true);
   const [testVideoURL, setTestVideoURL] = useState(null);
   const [theme, setTheme] = useState('light');
   const [buttonLabel, setButtonLabel] = useState('Tester');
-  const [videoBlob, setVideoBlob] = useState(null);  // Nouveau state pour stocker la vidéo
-  
+  const [videoBlob, setVideoBlob] = useState(null); // Store the video blob
 
   const openFinalModal = () => setIsFinalModalOpen(true);
   const closeFinalModal = () => setIsFinalModalOpen(false);
@@ -42,6 +40,9 @@ function Enregistrement() {
         if (candidateResponse.data) {
           setCandidateId(candidateResponse.data.id);
         }
+
+        // Initialiser les tentatives pour chaque question
+        setAttemptsLeft(Array(response.data.questions.length).fill(3));
       } catch (error) {
         console.error("Erreur lors de la récupération des données du poste ou du candidat:", error);
       }
@@ -112,9 +113,7 @@ function Enregistrement() {
     const blob = new Blob([event.data], { type: 'video/mp4' });
     const videoURL = URL.createObjectURL(blob);
     setTestVideoURL(videoURL);
-    setVideoBlob(blob);  // Stocker le blob vidéo
-
-    // Supprimer la logique d'upload ici pour éviter l'upload automatique
+    setVideoBlob(blob); // Store the video blob
   };
 
   const submitVideo = () => {
@@ -159,19 +158,22 @@ function Enregistrement() {
   };
 
   const handleReRecord = () => {
-    if (attemptsLeft > 0) {
-      setAttemptsLeft(attemptsLeft - 1);
+    if (attemptsLeft[currentQuestionIndex] > 0) {
+      setAttemptsLeft(attemptsLeft => {
+        const newAttempts = [...attemptsLeft];
+        newAttempts[currentQuestionIndex] -= 1;
+        return newAttempts;
+      });
       setElapsedTime(0);
       setRecording(false);
       startRecording();
     }
   };
-  
 
   const handleQuit = () => {
     axiosClient.post('/execute-storage-script')
       .then(response => {
-        console.log('Script exécuté avec succès :', response.data); // Traiter la réponse texte
+        console.log('Script exécuté avec succès :', response.data);
         closeFinalModal();
         navigate('/');
       })

@@ -26,6 +26,7 @@ function Enregistrement() {
   const [theme, setTheme] = useState('light');
   const [buttonLabel, setButtonLabel] = useState('Tester');
   const [videoBlob, setVideoBlob] = useState(null); // Store the video blob
+  const [isMuted, setIsMuted] = useState(true); // État pour gérer la coupure du son
 
   const openFinalModal = () => setIsFinalModalOpen(true);
   const closeFinalModal = () => setIsFinalModalOpen(false);
@@ -98,6 +99,7 @@ function Enregistrement() {
       mediaRecorderRef.current.start();
       setRecording(true);
       setButtonLabel('Arrêter');
+      setIsMuted(true); // Couper le son pendant l'enregistrement
     }
   };
 
@@ -106,6 +108,7 @@ function Enregistrement() {
       mediaRecorderRef.current.stop();
       setRecording(false);
       setButtonLabel(isPractice ? `Passer à Q1/${post.questions.length}` : 'Soumettre');
+      setIsMuted(true); // Maintenir le son coupé après l'enregistrement
     }
   };
 
@@ -231,7 +234,8 @@ function Enregistrement() {
               openFinalModal={openFinalModal}
               submitVideo={submitVideo}
               mediaRecorderRef={mediaRecorderRef}
-              candidateId={candidateId}
+              isMuted={isMuted} // Passer l'état isMuted
+              setIsMuted={setIsMuted} // Passer la fonction setIsMuted
             />
           </div>
         </div>

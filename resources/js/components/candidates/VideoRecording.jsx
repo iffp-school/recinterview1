@@ -1,5 +1,6 @@
 import React from 'react';
 import Webcam from 'react-webcam';
+import ReactPlayer from 'react-player';
 import { axiosClient } from '../../api/axios';
 
 const VideoRecording = ({
@@ -26,7 +27,8 @@ const VideoRecording = ({
   openFinalModal,
   submitVideo,
   mediaRecorderRef,
-  candidateId,
+  isMuted, // Recevoir l'état isMuted
+  setIsMuted // Recevoir la fonction setIsMuted
 }) => {
   // Fonction pour formater le temps en MM:SS
   const formatTime = (timeInSeconds) => {
@@ -102,9 +104,14 @@ const VideoRecording = ({
               </div>
             )}
             {testVideoURL && isPractice ? (
-              <video src={testVideoURL} className="mb-2 w-full" controls />
+              <ReactPlayer url={testVideoURL} className="mb-2 w-full" controls onPlay={() => setIsMuted(false)} onPause={() => setIsMuted(true)} />
             ) : (
-              <Webcam audio ref={webcamRef} className="mb-2 w-full" />
+              <Webcam
+                audio
+                ref={webcamRef}
+                muted={isMuted} // Couper le son selon l'état isMuted
+                className="mb-2 w-full"
+              />
             )}
           </div>
         )}

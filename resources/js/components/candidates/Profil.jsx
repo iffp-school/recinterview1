@@ -10,7 +10,9 @@ import ProfilModal from "./ProfilModal";
 
 // Validation schema
 const formSchema = z.object({
-  gender: z.enum(["Mr", "Mme"], "Veuillez sélectionner une civilité"),
+  gender: z.string().nonempty("Veuillez sélectionner la civilité").refine((val) => ["Mr", "Mme"].includes(val), {
+    message: "Veuillez sélectionner la civilité"
+  }),
   first_name: z.string().nonempty("Prénom requis"),
   last_name: z.string().nonempty("Nom requis"),
   email: z.string().email("Email invalide"),
@@ -26,6 +28,7 @@ export default function Profil() {
   const [post, setPost] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
+  const [serverErrors, setServerErrors] = useState({});
 
   const form = useForm({
     resolver: zodResolver(formSchema)
@@ -44,6 +47,7 @@ export default function Profil() {
         if (response.data) {
           setPost(response.data);
           setValue("post_id", String(response.data.id));
+          setValue("post_title", response.data.title); // Ajouter cette ligne pour définir la valeur du titre
         }
       } catch (error) {
         console.error("Erreur lors de la récupération du poste:", error);
@@ -54,6 +58,7 @@ export default function Profil() {
   }, [postRef, setValue]);
 
   const onSubmit = async (data) => {
+    setServerErrors({});
     try {
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
@@ -73,7 +78,11 @@ export default function Profil() {
       setModalData(data);
       setIsModalOpen(true);
     } catch (error) {
-      console.error("Erreur lors de la soumission des données du candidat:", error.response.data);
+      if (error.response && error.response.status === 422) {
+        setServerErrors(error.response.data.errors);
+      } else {
+        console.error("Erreur lors de la soumission des données du candidat:", error);
+      }
     }
   };
 
@@ -90,7 +99,7 @@ export default function Profil() {
         </button>
       </div>
       <FormProvider {...form}>
-        <ProfilForm post={post} theme={theme} onSubmit={onSubmit} />
+        <ProfilForm post={post} theme={theme} onSubmit={onSubmit} serverErrors={serverErrors} />
       </FormProvider>
       <ProfilModal isOpen={isModalOpen} post={post} startRecording={startRecording} closeModal={() => setIsModalOpen(false)} />
     </div>

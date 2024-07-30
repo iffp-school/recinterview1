@@ -115,14 +115,7 @@ function Home() {
           </div>
         </div>
         <div className="w-full md:w-1/2 p-4">
-          <iframe
-            className="w-full h-64 md:h-96 shadow-lg rounded-lg"
-            src="https://www.youtube.com/embed/4UyH7SoA5l8?si=cBL-6PpyuyRPau9l"
-            title="Vidéo de présentation"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/3rxns3k9dws?si=xliYptPIEnFgL-lf" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
       </div>
       <div id="features" className={`${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-900'} flex justify-center items-center py-12 m-4 shadow-lg rounded-lg transition-colors duration-300`}>

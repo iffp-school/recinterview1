@@ -61,7 +61,7 @@ class CandidateController extends Controller
             'gender' => 'required|string',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:candidates,email',
             'phone' => 'nullable|string',
             'cv' => 'required|file|mimes:pdf|max:2048', // Validation pour le champ CV
             'post_id' => 'required|exists:posts,id',

@@ -2,14 +2,14 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Loader } from 'lucide-react';
 
-export default function ProfilForm({ post, theme, onSubmit }) {
+export default function ProfilForm({ post, theme, onSubmit, serverErrors }) {
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useFormContext();
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data" className={`${theme === "dark" ? "bg-gray-800" : "bg-white"} w-full max-w-md p-8 rounded-lg shadow-md transition-colors duration-300`}>
             <h2 className="text-2xl font-bold text-center mb-6">Renseignez votre profil</h2>
             <div className="mb-4">
-                <select id="gender" {...register("gender")} className={`${theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-900"} p-2 rounded-lg w-full`}>
+                <select id="gender" {...register("gender")} defaultValue="" className={`${theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-900"} p-2 rounded-lg w-full`}>
                     <option value="">Sélectionner Civilité</option>
                     <option value="Mr">Mr</option>
                     <option value="Mme">Mme</option>
@@ -27,6 +27,7 @@ export default function ProfilForm({ post, theme, onSubmit }) {
             <div className="mb-4">
                 <input id="email" type="email" placeholder="Email" {...register("email")} className={`${theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-900"} p-2 rounded-lg w-full`} />
                 {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+                {serverErrors.email && <p className="text-red-500 text-sm">{serverErrors.email}</p>}
             </div>
             <div className="mb-4">
                 <div className="flex">
@@ -34,7 +35,7 @@ export default function ProfilForm({ post, theme, onSubmit }) {
                     <input
                         id="phone"
                         type="tel"
-                        placeholder="Numéro de téléphone"
+                        placeholder="Téléphone 06xxxxxxxx"
                         {...register("phone", {
                             required: "Numéro de téléphone requis",
                             pattern: {
@@ -56,9 +57,8 @@ export default function ProfilForm({ post, theme, onSubmit }) {
                 <input type="hidden" {...register("post_id")} />
                 {errors.post_id && <p className="text-red-500 text-sm">{errors.post_id.message}</p>}
             </div>
-            <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" disabled={isSubmitting}>
-                Enregistrer
-                {isSubmitting && <Loader className="mx-2 my-2 animate-spin" />}
+            <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center" disabled={isSubmitting}>
+                {isSubmitting ? <Loader className="animate-spin" /> : 'Démarrer'}
             </button>
         </form>
     );

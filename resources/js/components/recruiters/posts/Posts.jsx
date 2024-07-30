@@ -143,7 +143,7 @@ export default function Posts({ theme, toggleTheme }) {
     };
 
     const handleSendLink = (randomString) => {
-        const baseUrl = import.meta.env.VITE_API_BASE_URL;
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || window.location.origin;
         const link = `${baseUrl}/profil/${randomString}`;
         setLinkToSend(link);
         setIsLinkModalOpen(true);

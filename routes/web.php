@@ -10,6 +10,7 @@ use App\Http\Controllers\AuthController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/execute-storage-script', [ResponseController::class, 'executeStorageScript']);
+Route::get('/posts/random/{randomString}', [PostController::class, 'getByRandomString']);
 // Routes sécurisées
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -43,7 +44,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/posts/{id}', [PostController::class, 'show']);
     Route::put('/posts/{id}', [PostController::class, 'update']);
     Route::delete('/posts/{id}', [PostController::class, 'destroy']);
-    Route::get('/posts/random/{randomString}', [PostController::class, 'getByRandomString']);
     Route::post('/posts/{id}/questions', [PostController::class, 'attachQuestion']);
     Route::delete('/posts/{id}/questions', [PostController::class, 'detachQuestion']);
 

@@ -44,6 +44,12 @@ function Enregistrement() {
 
         // Initialiser les tentatives pour chaque question
         setAttemptsLeft(Array(response.data.questions.length).fill(3));
+
+        // Ajuster ici pour ne pas multiplier par 60 si les temps sont déjà en secondes
+        if (response.data.questions.length > 0) {
+          setPreparationTime(response.data.questions[0].preparation_time);
+          setResponseTime(response.data.questions[0].response_time);
+        }
       } catch (error) {
         console.error("Erreur lors de la récupération des données du poste ou du candidat:", error);
       }
@@ -51,6 +57,7 @@ function Enregistrement() {
 
     fetchPostAndCandidate();
   }, [email, selectedPostId]);
+
 
   useEffect(() => {
     let timer;
@@ -142,23 +149,23 @@ function Enregistrement() {
     if (isPractice) {
       setIsPractice(false);
       setTestVideoURL(null);
-      setPreparationTime(post.questions[0].preparation_time * 60);
-      setResponseTime(post.questions[0].response_time * 60);
+      setPreparationTime(post.questions[0].preparation_time);
+      setResponseTime(post.questions[0].response_time);
       setButtonLabel('Enregistrer');
     } else {
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
       setElapsedTime(0);
       setIsPreparation(true);
       if (currentQuestionIndex + 1 < post.questions.length) {
-        setPreparationTime(post.questions[currentQuestionIndex + 1].preparation_time * 60);
-        setResponseTime(post.questions[currentQuestionIndex + 1].response_time * 60);
+        setPreparationTime(post.questions[currentQuestionIndex + 1].preparation_time);
+        setResponseTime(post.questions[currentQuestionIndex + 1].response_time);
         setButtonLabel('Enregistrer');
       } else {
         setButtonLabel('Terminer');
         openFinalModal();
       }
     }
-  };
+  }; 
 
   const handleReRecord = () => {
     if (attemptsLeft[currentQuestionIndex] > 0) {

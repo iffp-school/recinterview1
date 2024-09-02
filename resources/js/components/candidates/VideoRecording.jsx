@@ -1,7 +1,6 @@
 import React from 'react';
 import Webcam from 'react-webcam';
 import ReactPlayer from 'react-player';
-import { axiosClient } from '../../api/axios';
 
 const VideoRecording = ({
   theme,
@@ -27,8 +26,8 @@ const VideoRecording = ({
   openFinalModal,
   submitVideo,
   mediaRecorderRef,
-  isMuted, // Recevoir l'état isMuted
-  setIsMuted // Recevoir la fonction setIsMuted
+  isMuted, 
+  setIsMuted 
 }) => {
   // Fonction pour formater le temps en MM:SS
   const formatTime = (timeInSeconds) => {
@@ -39,10 +38,12 @@ const VideoRecording = ({
 
   const preparationColor = theme === 'dark' ? '#1abc9c' : '#e74c3c'; // Teal for dark mode, red for light mode
   const responseColor = theme === 'dark' ? '#3498db' : '#f39c12'; // Blue for dark mode, orange for light mode
+  const textColor = theme === 'dark' ? 'text-white' : 'text-black'; // Adaptation de la couleur du texte
+  const backgroundColor = theme === 'dark' ? '#2c3e50' : '#ecf0f1'; // Adaptation du fond du disque affichant le temps
 
-  // Fonction pour calculer strokeDasharray
+  // Fonction pour calculer strokeDasharray (pour diminuer dans le sens des aiguilles d'une montre)
   const calculateStrokeDasharray = (elapsedTime, totalTime) => {
-    const proportion = (elapsedTime / totalTime) * 100;
+    const proportion = ((totalTime - elapsedTime) / totalTime) * 100;
     return `${proportion}, 100`;
   };
 
@@ -67,18 +68,21 @@ const VideoRecording = ({
             </div>
             {isPreparation && buttonLabel.includes('Enregistrer') && (
               <div className="relative flex flex-row items-center justify-center mb-4">
-                <span className={`m-2 text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Temps de préparation :</span>
+                <span className={`m-2 text-sm font-bold ${textColor}`}>Temps de préparation :</span>
                 <div className="relative flex justify-center items-center ml-2">
-                  <div className={`absolute ${theme === 'dark' ? 'text-white' : 'text-black'}`}>{formatTime(preparationTime)}</div>
+                  <div className={`absolute ${textColor} flex justify-center items-center`} style={{ backgroundColor, borderRadius: '50%', width: '48px', height: '48px' }}>
+                    {formatTime(preparationTime)}
+                  </div>
                   <svg className="w-16 h-16" viewBox="0 0 36 36">
                     <path
                       className="stroke-current"
                       strokeWidth="4"
                       strokeDasharray={calculateStrokeDasharray(30 - preparationTime, 30)}
+                      strokeLinecap="round"
                       d="M18 2.0845
                       a 15.9155 15.9155 0 0 1 0 31.831
                       a 15.9155 15.9155 0 0 1 0 -31.831"
-                      style={{ stroke: preparationColor }}
+                      style={{ stroke: preparationColor, transition: 'stroke-dasharray 1s linear' }}
                     />
                   </svg>
                 </div>
@@ -86,18 +90,21 @@ const VideoRecording = ({
             )}
             {recording && (
               <div className="relative flex flex-row items-center justify-center mb-4">
-                <span className={`m-2 text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Temps de réponse :</span>
+                <span className={`m-2 text-sm font-bold ${textColor}`}>Temps de réponse :</span>
                 <div className="relative flex justify-center items-center ml-2">
-                  <div className={`absolute ${theme === 'dark' ? 'text-white' : 'text-black'}`}>{formatTime(responseTime - elapsedTime)}</div>
+                  <div className={`absolute ${textColor} flex justify-center items-center`} style={{ backgroundColor, borderRadius: '50%', width: '48px', height: '48px' }}>
+                    {formatTime(responseTime - elapsedTime)}
+                  </div>
                   <svg className="w-16 h-16" viewBox="0 0 36 36">
                     <path
                       className="stroke-current"
                       strokeWidth="4"
                       strokeDasharray={calculateStrokeDasharray(elapsedTime, responseTime)}
+                      strokeLinecap="round"
                       d="M18 2.0845
                       a 15.9155 15.9155 0 0 1 0 31.831
                       a 15.9155 15.9155 0 0 1 0 -31.831"
-                      style={{ stroke: responseColor }}
+                      style={{ stroke: responseColor, transition: 'stroke-dasharray 1s linear' }}
                     />
                   </svg>
                 </div>
@@ -109,7 +116,7 @@ const VideoRecording = ({
               <Webcam
                 audio
                 ref={webcamRef}
-                muted={isMuted} // Couper le son selon l'état isMuted
+                muted={isMuted} 
                 className="mb-2 w-full"
               />
             )}
@@ -178,7 +185,7 @@ const VideoRecording = ({
       </div>
       {!recording && !isPreparation && buttonLabel === 'Soumettre' && !isPractice && (
         <div className="mt-2 text-center">
-          <p className={`text-sm ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+          <p className={`text-sm ${textColor}`}>
             Tentatives restantes : {attemptsLeft[currentQuestionIndex]}
           </p>
         </div>

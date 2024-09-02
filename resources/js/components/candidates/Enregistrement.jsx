@@ -165,7 +165,7 @@ function Enregistrement() {
         openFinalModal();
       }
     }
-  }; 
+  };
 
   const handleReRecord = () => {
     if (attemptsLeft[currentQuestionIndex] > 0) {
@@ -213,7 +213,7 @@ function Enregistrement() {
             <div className="w-full md:w-1/2 p-4">
               <div className={`${theme === 'dark' ? 'bg-gray-700' : 'bg-white'} mb-6 p-6 rounded-lg shadow-lg`}>
                 <h3 className={`text-3xl font-bold mb-2 text-center ${theme === 'dark' ? 'text-white' : 'text-black'}`}>{post.title}</h3>
-                <p className={`text-center ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`} style={{ whiteSpace: 'pre-wrap' }}>{post.description}</p>
+                <div className={`text-center ${theme === 'dark' ? 'text-white' : 'text-gray-700'}`} style={{ whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: post.description }} />
               </div>
             </div>
             <VideoRecording

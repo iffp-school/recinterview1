@@ -33,7 +33,7 @@ const DetailsModal = ({ showDetailsModal, handleCloseDetailsModal, currentPost }
         })}
       </p>
       <h3 className="text-lg font-semibold mb-2">Description</h3>
-      <p className="text-gray-800 mb-4">{currentPost.description}</p>
+      <div className="text-gray-800 mb-4" dangerouslySetInnerHTML={{ __html: currentPost.description }} />
       <h3 className="text-lg font-semibold mb-2">Questions</h3>
       <ul>
         {currentPost.questions && currentPost.questions.map((question, index) => (

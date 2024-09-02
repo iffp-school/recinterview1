@@ -45,13 +45,14 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'recruiter_id' => 'required|integer',
+            'message_end' => 'nullable|string', // Ajoutez cette ligne
             'questions' => 'sometimes|array',
             'questions.*.question_text' => 'required_with:questions|string',
             'questions.*.preparation_time' => 'required_with:questions|integer',
             'questions.*.response_time' => 'required_with:questions|integer',
         ]);
 
-        $post = Post::create($request->only(['title', 'description', 'recruiter_id']));
+        $post = Post::create($request->only(['title', 'description', 'recruiter_id', 'message_end'])); // Ajoutez 'message_end'
 
         if ($request->has('questions')) {
             foreach ($request->questions as $questionData) {
@@ -68,6 +69,7 @@ class PostController extends Controller
         return response()->json($post->load('questions'), 201);
     }
 
+
     public function show($id)
     {
         return response()->json(Post::with('questions')->findOrFail($id), 200);
@@ -79,6 +81,7 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'recruiter_id' => 'required|integer',
+            'message_end' => 'string', // Ajoutez cette ligne
             'questions' => 'sometimes|array',
             'questions.*.id' => 'sometimes|required|integer|exists:questions,id',
             'questions.*.question_text' => 'required_with:questions|string',
@@ -87,7 +90,7 @@ class PostController extends Controller
         ]);
 
         $post = Post::findOrFail($id);
-        $post->update($request->only(['title', 'description', 'recruiter_id']));
+        $post->update($request->only(['title', 'description', 'recruiter_id', 'message_end']));
 
         if ($request->has('questions')) {
             foreach ($request->questions as $questionData) {

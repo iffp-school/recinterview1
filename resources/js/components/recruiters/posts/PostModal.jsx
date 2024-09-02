@@ -164,7 +164,7 @@ const PostModal = ({
                                                     modules={{
                                                         toolbar: [
                                                             [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
-                                                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                                                             ['bold', 'italic', 'underline'],
                                                             [{ 'color': [] }, { 'background': [] }],
                                                             ['clean']
@@ -173,6 +173,26 @@ const PostModal = ({
                                                 />
                                             </FormControl>
                                             {errors.description && <FormMessage className="text-red-500">{errors.description.message}</FormMessage>}
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={control}
+                                    name="message_end"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Message de fin</FormLabel>
+                                            <FormControl>
+                                                <textarea
+                                                    {...field}
+                                                    value={field.value == '' ? currentPost.message_end : field.value } // Utilisez `field.value` ou `currentPost.message_end`
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                        setCurrentPost({ ...currentPost, message_end: e.target.value });
+                                                    }}
+                                                    className="border border-gray-300 rounded px-4 py-2 mb-2 w-full"
+                                                />
+                                            </FormControl>
                                         </FormItem>
                                     )}
                                 />

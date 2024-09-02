@@ -14,7 +14,8 @@ class Post extends Model
         'recruiter_id',
         'title',
         'description',
-        'random_string'
+        'random_string',
+        'message_end'
     ];
 
     public function recruiter()

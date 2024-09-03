@@ -54,15 +54,15 @@ const VideoRecording = ({
           {Array.from({ length: post.questions.length }).map((_, index) => (
             <div
               key={index}
-              className={`flex-1 h-2 ${currentQuestionIndex > index ? 'bg-green-500' : 'bg-gray-300'} transition-colors duration-500`}
-              style={{ width: `${100 / post.questions.length}%` }}
+              className={`flex-1 h-2 ${ !isPractice && currentQuestionIndex > index - 1 ? 'bg-green-500' : 'bg-gray-300'} transition-colors duration-500`}
+              style={{ width: `${100 / post.questions.length }%` }}
             />
           ))}
         </div>
         {currentQuestionIndex < post.questions.length && (
           <div className={`${theme === 'dark' ? 'bg-gray-700' : 'bg-white'} mb-6 p-6 rounded-lg shadow-lg relative transition-colors duration-300`}>
             <div className="flex justify-center items-center mb-4">
-              <span className={`text-base font-bold bg-blue-500 text-white px-2 py-1 rounded-full`}>
+              <span className={`text-base font-bold bg-blue-500 text-white px-2 py-1 rounded-lg`}>
                 {isPractice ? 'Question Test: Parlez de vos compétences et expériences' : `Question ${currentQuestionIndex + 1}: ${post.questions[currentQuestionIndex]?.question_text || ''}`}
               </span>
             </div>

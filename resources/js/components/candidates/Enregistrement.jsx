@@ -252,6 +252,7 @@ function Enregistrement() {
         closeFinalModal={closeFinalModal}
         handleQuit={handleQuit}
         theme={theme}
+        messageEnd={post.message_end}
       />
     </div>
   );

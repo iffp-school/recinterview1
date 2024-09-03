@@ -15,7 +15,7 @@ const DetailsModal = ({ showDetailsModal, handleCloseDetailsModal, currentPost }
     onRequestClose={handleCloseDetailsModal}
     className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75"
   >
-    <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 lg:w-1/3 relative">
+    <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 lg:w-1/3 relative max-h-screen overflow-y-auto">
       <button
         onClick={handleCloseDetailsModal}
         className="absolute top-0 right-0 m-2 text-black text-2xl font-bold"

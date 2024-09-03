@@ -17,7 +17,7 @@ const formSchema = z.object({
     question_text: z.string().min(1, { message: "Question is required" }),
     preparation_time: z.number().min(1, { message: "Preparation time is required" }),
     response_time: z.number().min(1, { message: "Response time is required" }),
-});
+})
 
 const PostModal = ({
     isModalOpen,
@@ -48,6 +48,7 @@ const PostModal = ({
     const editQuestion = (index) => {
         const questionToEdit = post.questions[index];
         setNewQuestion({
+            id: questionToEdit.id,  // s'assurer que l'ID est présent lors de l'édition
             question_text: questionToEdit.question_text,
             preparation_time: questionToEdit.preparation_time,
             response_time: questionToEdit.response_time,
@@ -55,10 +56,16 @@ const PostModal = ({
         setEditingIndex(index);
     };
 
+    
+
+
     const saveQuestion = () => {
         if (editingIndex !== null) {
             const updatedQuestions = [...post.questions];
-            updatedQuestions[editingIndex] = { ...newQuestion };
+            updatedQuestions[editingIndex] = {
+                ...newQuestion,
+                id: post.questions[editingIndex].id, // Assurez-vous que l'ID est conservé pour les questions existantes
+            };
             setCurrentPost({ ...post, questions: updatedQuestions });
             setEditingIndex(null);
         } else {
@@ -66,6 +73,7 @@ const PostModal = ({
         }
         setNewQuestion({ question_text: '', preparation_time: 30, response_time: 90 });
     };
+
 
     const [newQuestion, setNewQuestion] = useState({ question_text: '', preparation_time: 30, response_time: 90 });
 
@@ -76,7 +84,7 @@ const PostModal = ({
     const handleAddQuestion = () => {
         const totalDurationWithNewQuestion = totalDuration + parseInt(newQuestion.preparation_time) + parseInt(newQuestion.response_time);
         if (totalDurationWithNewQuestion > 900) {
-            setErrorMessage("La durée totale ne peut pas dépasser 20 minutes !");
+            setErrorMessage("La durée totale ne peut pas dépasser 15 minutes !");
             return;
         }
         setErrorMessage('');
@@ -92,11 +100,12 @@ const PostModal = ({
         defaultValues: {
             title: post.title || '',
             description: post.description || '',
-            question_text: '',
-            preparation_time: 30,
-            response_time: 90,
+            question_text: newQuestion.question_text || '',
+            preparation_time: newQuestion.preparation_time || 30,
+            response_time: newQuestion.response_time || 90,
         },
     });
+
 
     const { handleSubmit: handleFormSubmit, control, formState: { errors } } = form;
 
@@ -185,7 +194,7 @@ const PostModal = ({
                                             <FormControl>
                                                 <textarea
                                                     {...field}
-                                                    value={field.value == '' ? currentPost.message_end : field.value } // Utilisez `field.value` ou `currentPost.message_end`
+                                                    value={field.value == '' ? currentPost.message_end : field.value} // Utilisez `field.value` ou `currentPost.message_end`
                                                     onChange={(e) => {
                                                         field.onChange(e);
                                                         setCurrentPost({ ...currentPost, message_end: e.target.value });
@@ -203,8 +212,7 @@ const PostModal = ({
                                         <FormItem>
                                             <FormLabel>Question *</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    type="text"
+                                                <textarea
                                                     placeholder="Question"
                                                     {...field}
                                                     value={newQuestion.question_text}
@@ -212,6 +220,8 @@ const PostModal = ({
                                                         field.onChange(e);
                                                         handleNewQuestionChange('question_text', e.target.value);
                                                     }}
+                                                    className="border border-gray-300 rounded px-4 py-2 mb-2 w-full"
+                                                    rows={4} // Définir le nombre de lignes du textarea
                                                 />
                                             </FormControl>
                                             {errors.question_text && <FormMessage className="text-red-500">{errors.question_text.message}</FormMessage>}

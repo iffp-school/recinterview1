@@ -91,7 +91,12 @@ export default function Posts({ theme, toggleTheme }) {
         const postData = {
             title: currentPost.title,
             description: currentPost.description,
-            questions: currentPost.questions,
+            questions: currentPost.questions.map(question => ({
+                id: question.id || null, // Inclure l'ID pour les questions existantes
+                question_text: question.question_text,
+                preparation_time: parseInt(question.preparation_time, 10),
+                response_time: parseInt(question.response_time, 10)
+            })),
             recruiter_id: 1
         };
 

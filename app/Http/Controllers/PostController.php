@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
@@ -81,7 +82,7 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'recruiter_id' => 'required|integer',
-            'message_end' => 'string', // Ajoutez cette ligne
+            'message_end' => 'nullable|string',
             'questions' => 'sometimes|array',
             'questions.*.id' => 'sometimes|required|integer|exists:questions,id',
             'questions.*.question_text' => 'required_with:questions|string',
@@ -95,6 +96,7 @@ class PostController extends Controller
         if ($request->has('questions')) {
             foreach ($request->questions as $questionData) {
                 if (isset($questionData['id'])) {
+                    // Update an existing question
                     $question = Question::findOrFail($questionData['id']);
                     $question->update([
                         'question_text' => $questionData['question_text'],
@@ -102,6 +104,7 @@ class PostController extends Controller
                         'response_time' => $questionData['response_time'],
                     ]);
                 } else {
+                    // Create a new question
                     $question = new Question([
                         'question_text' => $questionData['question_text'],
                         'preparation_time' => $questionData['preparation_time'],
@@ -112,7 +115,8 @@ class PostController extends Controller
                 }
             }
         }
-
+        
+        Log::info('Requête de mise à jour du post: ', $request->all());
         return response()->json($post->load('questions'), 200);
     }
 

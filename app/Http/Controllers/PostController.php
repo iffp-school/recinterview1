@@ -84,7 +84,7 @@ class PostController extends Controller
             'recruiter_id' => 'required|integer',
             'message_end' => 'nullable|string',
             'questions' => 'sometimes|array',
-            'questions.*.id' => 'sometimes|required|integer|exists:questions,id',
+            'questions.*.id' => 'sometimes|integer|exists:questions,id',
             'questions.*.question_text' => 'required_with:questions|string',
             'questions.*.preparation_time' => 'required_with:questions|integer',
             'questions.*.response_time' => 'required_with:questions|integer',
@@ -93,7 +93,10 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
         $post->update($request->only(['title', 'description', 'recruiter_id', 'message_end']));
 
+        // Logique pour mettre à jour et supprimer les questions existantes
         if ($request->has('questions')) {
+            $questionIds = [];
+
             foreach ($request->questions as $questionData) {
                 if (isset($questionData['id'])) {
                     // Update an existing question
@@ -103,6 +106,7 @@ class PostController extends Controller
                         'preparation_time' => $questionData['preparation_time'],
                         'response_time' => $questionData['response_time'],
                     ]);
+                    $questionIds[] = $question->id;
                 } else {
                     // Create a new question
                     $question = new Question([
@@ -112,11 +116,14 @@ class PostController extends Controller
                         'post_id' => $post->id
                     ]);
                     $question->save();
+                    $questionIds[] = $question->id;
                 }
             }
+
+            // Supprimer les questions qui ne sont plus présentes dans la requête
+            Question::where('post_id', $post->id)->whereNotIn('id', $questionIds)->delete();
         }
 
-        Log::info('Requête de mise à jour du post: ', $request->all());
         return response()->json($post->load('questions'), 200);
     }
 

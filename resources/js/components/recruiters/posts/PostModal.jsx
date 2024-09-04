@@ -56,24 +56,6 @@ const PostModal = ({
         setEditingIndex(index);
     };
 
-    
-
-
-    const saveQuestion = () => {
-        if (editingIndex !== null) {
-            const updatedQuestions = [...post.questions];
-            updatedQuestions[editingIndex] = {
-                ...newQuestion,
-                id: post.questions[editingIndex].id, // Assurez-vous que l'ID est conservé pour les questions existantes
-            };
-            setCurrentPost({ ...post, questions: updatedQuestions });
-            setEditingIndex(null);
-        } else {
-            setCurrentPost({ ...post, questions: [...post.questions, newQuestion] });
-        }
-        setNewQuestion({ question_text: '', preparation_time: 30, response_time: 90 });
-    };
-
 
     const [newQuestion, setNewQuestion] = useState({ question_text: '', preparation_time: 30, response_time: 90 });
 
@@ -110,8 +92,29 @@ const PostModal = ({
     const { handleSubmit: handleFormSubmit, control, formState: { errors } } = form;
 
     const onSubmit = (data) => {
-        handleAddQuestion();
+        if (editingIndex !== null) {
+            // Mode édition: seulement sauver la question
+            saveQuestion();
+        } else {
+            // Mode ajout: ajouter une nouvelle question
+            handleAddQuestion();
+        }
     };
+
+    const saveQuestion = () => {
+        if (editingIndex !== null) {
+            const updatedQuestions = [...post.questions];
+            updatedQuestions[editingIndex] = {
+                ...newQuestion,
+                id: post.questions[editingIndex].id, // Assurez-vous que l'ID est conservé pour les questions existantes
+            };
+            setCurrentPost({ ...post, questions: updatedQuestions });
+            setEditingIndex(null);
+        }
+        setNewQuestion({ question_text: '', preparation_time: 30, response_time: 90 });
+    };
+
+
 
     const totalMinutes = Math.floor(totalDuration / 60);
     const totalSeconds = totalDuration % 60;
@@ -300,14 +303,25 @@ const PostModal = ({
                                     />
                                 </div>
                                 <div className="flex justify-center">
-                                    <Button
-                                        type="submit"
-                                        className="bg-blue-500 text-white px-4 py-2 rounded-md m-2"
-                                        disabled={!isNewQuestionFieldsFilled()}
-                                    >
-                                        {editingIndex !== null ? 'Modifier' : 'Ajouter'}
-                                    </Button>
+                                    {editingIndex !== null ? (
+                                        <Button
+                                            type="button" // Remplacer type="submit" par type="button"
+                                            className="bg-blue-500 text-white px-4 py-2 rounded-md m-2"
+                                            onClick={saveQuestion} // Utiliser directement la fonction saveQuestion
+                                        >
+                                            Modifier
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            type="submit"
+                                            className="bg-blue-500 text-white px-4 py-2 rounded-md m-2"
+                                            disabled={!isNewQuestionFieldsFilled()}
+                                        >
+                                            Ajouter
+                                        </Button>
+                                    )}
                                 </div>
+
                                 {errorMessage && (
                                     <p className="text-red-500 mb-4">{errorMessage}</p>
                                 )}

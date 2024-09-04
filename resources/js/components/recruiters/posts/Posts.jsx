@@ -91,15 +91,24 @@ export default function Posts({ theme, toggleTheme }) {
 
     const handleEdit = () => {
         setIsSubmitting(true);
+
         const postData = {
             title: currentPost.title,
             description: currentPost.description,
-            questions: currentPost.questions.map(question => ({
-                id: question.id || null, // Inclure l'ID pour les questions existantes
-                question_text: question.question_text,
-                preparation_time: parseInt(question.preparation_time, 10),
-                response_time: parseInt(question.response_time, 10)
-            })),
+            questions: currentPost.questions.map(question => {
+                const formattedQuestion = {
+                    question_text: question.question_text,
+                    preparation_time: parseInt(question.preparation_time, 10),
+                    response_time: parseInt(question.response_time, 10)
+                };
+
+                // Inclure l'ID seulement si la question a déjà un ID
+                if (question.id) {
+                    formattedQuestion.id = question.id;
+                }
+
+                return formattedQuestion;
+            }),
             recruiter_id: 1
         };
 
@@ -168,9 +177,24 @@ export default function Posts({ theme, toggleTheme }) {
     };
 
     const removeQuestion = (index) => {
-        const newQuestions = currentPost.questions.filter((_, i) => i !== index);
-        setCurrentPost({ ...currentPost, questions: newQuestions });
+        const questionToDelete = currentPost.questions[index];
+
+        // Si la question a un ID, c'est qu'elle existe dans la base, on la supprime
+        if (questionToDelete.id) {
+            axiosClient.delete(`/questions/${questionToDelete.id}`)
+                .then(() => {
+                    const newQuestions = currentPost.questions.filter((_, i) => i !== index);
+                    setCurrentPost({ ...currentPost, questions: newQuestions });
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la suppression de la question : ', error);
+                });
+        } else {
+            const newQuestions = currentPost.questions.filter((_, i) => i !== index);
+            setCurrentPost({ ...currentPost, questions: newQuestions });
+        }
     };
+
 
     const handleQuestionChange = (index, field, value) => {
         const newQuestions = currentPost.questions.map((q, i) => i === index ? { ...q, [field]: value } : q);

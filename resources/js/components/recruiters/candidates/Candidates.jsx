@@ -16,11 +16,12 @@ export default function Candidates({ theme, toggleTheme }) {
   const [sortBy, setSortBy] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentVideoUrl, setCurrentVideoUrl] = useState('');
-  const [currentQuestion, setCurrentQuestion] = useState('');
+  const [currentResponses, setCurrentResponses] = useState([]);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [candidateToDelete, setCandidateToDelete] = useState(null);
 
+  // Fonction fetchCandidates qui est appelée pour récupérer les candidats
   const fetchCandidates = (page, searchTerm = '', sortBy = '', sortDirection = 'asc') => {
     axiosClient.get(`/candidates`, {
       params: {
@@ -40,6 +41,7 @@ export default function Candidates({ theme, toggleTheme }) {
       });
   };
 
+  // Appeler fetchCandidates lors du montage et lors des changements de page/recherche
   useEffect(() => {
     fetchCandidates(currentPage, recherche, sortBy, sortDirection);
   }, [currentPage, recherche, sortBy, sortDirection]);
@@ -55,20 +57,15 @@ export default function Candidates({ theme, toggleTheme }) {
     setSortDirection(newSortDirection);
   };
 
-  const handleVideoClick = (videoUrl, question) => {
-    const newVideoUrl = `${import.meta.env.VITE_API_BASE_URL}/storage/${videoUrl}`;
-    setCurrentVideoUrl(newVideoUrl);
-    setCurrentQuestion(question ? question.question_text : 'Question not found');
+  const handleVideoClick = (responses) => {
+    setCurrentResponses(responses);
+    setCurrentVideoIndex(0);
     setIsModalOpen(true);
   };
 
   const handleDownloadCV = (cvUrl) => {
-    const downloadUrl = `${import.meta.env.VITE_API_BASE_URL}/storage/${cvUrl}`;
+    const downloadUrl = cvUrl;
     window.open(downloadUrl, '_blank');
-  };
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
   };
 
   const openConfirmModal = (id) => {
@@ -111,7 +108,7 @@ export default function Candidates({ theme, toggleTheme }) {
             handleVideoClick={handleVideoClick}
             handleDownloadCV={handleDownloadCV}
             openConfirmModal={openConfirmModal}
-            fetchCandidates={() => fetchCandidates(currentPage, recherche, sortBy, sortDirection)} 
+            fetchCandidates={fetchCandidates}  // Passez bien fetchCandidates comme prop ici
           />
           <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
         </div>
@@ -119,8 +116,9 @@ export default function Candidates({ theme, toggleTheme }) {
       <VideoModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        currentVideoUrl={currentVideoUrl}
-        currentQuestion={currentQuestion}
+        currentResponses={currentResponses}
+        currentVideoIndex={currentVideoIndex}
+        setCurrentVideoIndex={setCurrentVideoIndex}
       />
       <ConfirmationModal
         isOpen={isConfirmModalOpen}

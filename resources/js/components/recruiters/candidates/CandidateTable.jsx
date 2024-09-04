@@ -1,12 +1,13 @@
 import React from 'react';
-import { FaTrash, FaVideo, FaFilePdf, FaSort, FaSortUp, FaSortDown, FaStar } from 'react-icons/fa';
-import { axiosClient } from '../../../api/axios';
+import { FaTrash, FaPlayCircle, FaFilePdf, FaSort, FaSortUp, FaSortDown, FaStar } from 'react-icons/fa';
+import { axiosClient } from '../../../api/axios';  // Assurez-vous d'importer axiosClient
 
 const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleVideoClick, handleDownloadCV, openConfirmModal, fetchCandidates }) => {
+
   const handleRatingChange = async (candidateId, newRating) => {
     try {
       await axiosClient.put(`/candidates/${candidateId}/rating`, { rating: newRating });
-      fetchCandidates(); // Re-fetch candidates to update the list with new rating
+      fetchCandidates(); // Appel à fetchCandidates après la mise à jour de la note
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la note:', error);
     }
@@ -33,19 +34,14 @@ const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleV
               Date d'inscription
               {sortBy === 'created_at' ? (sortDirection === 'asc' ? <FaSortUp className="inline ml-1" /> : <FaSortDown className="inline ml-1" />) : <FaSort className="inline ml-1" />}
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer" onClick={() => handleSort('post.title')}>
-              Poste
-              {sortBy === 'post.title' ? (sortDirection === 'asc' ? <FaSortUp className="inline ml-1" /> : <FaSortDown className="inline ml-1" />) : <FaSort className="inline ml-1" />}
-            </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               CV
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               Réponses
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer" onClick={() => handleSort('rating')}>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               Note
-              {sortBy === 'rating' ? (sortDirection === 'asc' ? <FaSortUp className="inline ml-1" /> : <FaSortDown className="inline ml-1" />) : <FaSort className="inline ml-1" />}
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
               Actions
@@ -76,12 +72,9 @@ const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleV
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm font-medium text-gray-800">{candidate.post.title}</div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
                 {candidate.cv && (
                   <button
-                    onClick={() => handleDownloadCV(candidate.cv)}
+                    onClick={() => handleDownloadCV(candidate.cv_url)}  // Utiliser cv_url
                     className="text-blue-500 hover:text-blue-700"
                   >
                     <FaFilePdf size={18} />
@@ -89,16 +82,12 @@ const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleV
                 )}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex flex-wrap gap-2">
-                  {candidate.responses.map((response, index) => {
-                    const question = candidate.post.questions[index];
-                    return (
-                      <div key={index} className="cursor-pointer" onClick={() => handleVideoClick(response.video_url, question)}>
-                        <FaVideo className="text-blue-500 text-2xl" />
-                      </div>
-                    );
-                  })}
-                </div>
+                {candidate.responses.length > 0 && (
+                  <FaPlayCircle
+                    className="text-blue-500 text-2xl cursor-pointer"
+                    onClick={() => handleVideoClick(candidate.responses)}  // Envoie toutes les vidéos à handleVideoClick
+                  />
+                )}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center space-x-1">
@@ -106,7 +95,7 @@ const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleV
                     <FaStar
                       key={starIndex}
                       className={`cursor-pointer ${starIndex < candidate.rating ? 'text-yellow-500' : 'text-gray-300'}`}
-                      onClick={() => handleRatingChange(candidate.id, starIndex + 1)}
+                      onClick={() => handleRatingChange(candidate.id, starIndex + 1)} // Gestion du changement de rating
                     />
                   ))}
                 </div>

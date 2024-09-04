@@ -173,6 +173,10 @@ export default function Posts({ theme, toggleTheme }) {
         const newQuestions = currentPost.questions.map((q, i) => i === index ? { ...q, [field]: value } : q);
         setCurrentPost({ ...currentPost, questions: newQuestions });
     };
+    const handleOpenResponsesModal = (post) => {
+        // Naviguer vers la page des candidats avec le titre du poste dans state
+        navigate('/recruiter/candidates', { state: { postTitle: post.title, postId: post.id } });
+    };
 
     return (
         <div className={`${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} flex flex-col md:flex-row h-screen transition-colors duration-300`}>
@@ -198,6 +202,7 @@ export default function Posts({ theme, toggleTheme }) {
                                 setShowConfirmationModal={setShowConfirmationModal}
                                 handleDetails={handleDetails}
                                 handleSendLink={handleSendLink}
+                                handleOpenResponsesModal={handleOpenResponsesModal}
                             />
                             <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
                         </div>

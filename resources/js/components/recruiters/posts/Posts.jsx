@@ -11,6 +11,7 @@ import PostSearchBar from './PostSearchBar';
 import Pagination from '../common/Pagination';
 import LinkModal from './LinkModal';
 import NewPost from './NewPost';
+import ResponseModal from './ResponseModal';
 
 export default function Posts({ theme, toggleTheme }) {
     const [posts, setPosts] = useState([]);
@@ -28,6 +29,8 @@ export default function Posts({ theme, toggleTheme }) {
     const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
     const [linkToSend, setLinkToSend] = useState('');
     const [isLinkCopied, setIsLinkCopied] = useState(false);
+    const [isResponseModalOpen, setIsResponseModalOpen] = useState(false);
+    const [responseDetails, setResponseDetails] = useState(null); // Pour stocker les réponses récupérées
     const navigate = useNavigate();
 
     const fetchPosts = (page, term = '', sortBy = '', sortDirection = 'asc') => {
@@ -173,9 +176,21 @@ export default function Posts({ theme, toggleTheme }) {
         const newQuestions = currentPost.questions.map((q, i) => i === index ? { ...q, [field]: value } : q);
         setCurrentPost({ ...currentPost, questions: newQuestions });
     };
+
+    // Ouvrir la modal pour les réponses vidéo d'un post
     const handleOpenResponsesModal = (post) => {
-        // Naviguer vers la page des candidats avec le titre du poste dans state
-        navigate('/recruiter/candidates', { state: { postTitle: post.title, postId: post.id } });
+        axiosClient.get(`/posts/${post.id}/responses`)
+            .then((response) => {
+                if (response.data && response.data.responses) {
+                    setResponseDetails(response.data);  // Stocker les réponses uniquement si elles existent
+                    setIsResponseModalOpen(true);  // Ouvrir la modal seulement si les réponses sont chargées
+                } else {
+                    console.error('Pas de réponses disponibles pour ce post.');
+                }
+            })
+            .catch((error) => {
+                console.error("Erreur lors de la récupération des réponses:", error);
+            });
     };
 
     return (
@@ -202,7 +217,7 @@ export default function Posts({ theme, toggleTheme }) {
                                 setShowConfirmationModal={setShowConfirmationModal}
                                 handleDetails={handleDetails}
                                 handleSendLink={handleSendLink}
-                                handleOpenResponsesModal={handleOpenResponsesModal}
+                                handleOpenResponsesModal={handleOpenResponsesModal}  // Ajoutez cette méthode
                             />
                             <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
                         </div>
@@ -239,6 +254,11 @@ export default function Posts({ theme, toggleTheme }) {
                 linkToSend={linkToSend}
                 handleCopyLink={handleCopyLink}
                 isLinkCopied={isLinkCopied}
+            />
+            <ResponseModal
+                isOpen={isResponseModalOpen}
+                onRequestClose={() => setIsResponseModalOpen(false)}
+                responseDetails={responseDetails}  // Passez les réponses dans la modal
             />
         </div>
     );

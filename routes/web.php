@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/recruiters/{id}', [RecruiterController::class, 'destroy']);
 
     Route::get('/posts', [PostController::class, 'index']);
+    Route::get('/posts/{id}/responses', [PostController::class, 'getResponsesByPost']);
     Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts/{id}', [PostController::class, 'update']);
     Route::delete('/posts/{id}', [PostController::class, 'destroy']);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BsPencilSquare, BsTrash, BsInfoCircleFill, BsSend, BsCameraVideo } from 'react-icons/bs';
+import { BsPencilSquare, BsTrash, BsInfoCircleFill, BsSend } from 'react-icons/bs';
 import { FaSort, FaSortUp, FaSortDown, FaPlayCircle } from 'react-icons/fa';
 
 const PostTable = ({ posts, sortBy, sortDirection, handleSort, setCurrentPost, setIsModalOpen, setPostIdToDelete, setShowConfirmationModal, handleDetails, handleSendLink, handleOpenResponsesModal }) => (

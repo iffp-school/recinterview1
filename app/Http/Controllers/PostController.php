@@ -115,7 +115,7 @@ class PostController extends Controller
                 }
             }
         }
-        
+
         Log::info('Requête de mise à jour du post: ', $request->all());
         return response()->json($post->load('questions'), 200);
     }
@@ -159,5 +159,34 @@ class PostController extends Controller
     {
         $post = Post::where('random_string', $randomString)->firstOrFail();
         return response()->json($post, 200);
+    }
+
+    public function getResponsesByPost($postId)
+    {
+        // Récupérer les candidats avec leurs réponses et questions du poste
+        $post = Post::with(['candidates.responses'])->findOrFail($postId);
+        $questions = $post->questions;
+
+        $responsesByCandidate = $post->candidates->map(function ($candidate) use ($questions) {
+            return [
+                'candidate' => [
+                    'first_name' => $candidate->first_name,
+                    'last_name' => $candidate->last_name,
+                    'email' => $candidate->email,
+                ],
+                'responses' => $candidate->responses->map(function ($response, $index) use ($questions) {
+                    $question = $questions[$index] ?? null;
+                    return [
+                        'video_url' => $response->video_url,
+                        'question' => $question ? $question->question_text : 'Question non trouvée',
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json([
+            'post_title' => $post->title,
+            'responses' => $responsesByCandidate,
+        ], 200);
     }
 }

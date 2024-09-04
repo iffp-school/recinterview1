@@ -82,10 +82,10 @@ const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleV
                 )}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                {candidate.responses.length > 0 && (
+                {candidate.responses.length > 0 && candidate.post.questions.length > 0 && (
                   <FaPlayCircle
                     className="text-blue-500 text-2xl cursor-pointer"
-                    onClick={() => handleVideoClick(candidate.responses)}  // Envoie toutes les vidéos à handleVideoClick
+                    onClick={() => handleVideoClick(candidate.responses, candidate.post.questions)}  // Associer les réponses aux questions
                   />
                 )}
               </td>

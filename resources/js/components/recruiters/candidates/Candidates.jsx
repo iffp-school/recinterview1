@@ -57,11 +57,30 @@ export default function Candidates({ theme, toggleTheme }) {
     setSortDirection(newSortDirection);
   };
 
-  const handleVideoClick = (responses) => {
-    setCurrentResponses(responses);
-    setCurrentVideoIndex(0);
-    setIsModalOpen(true);
+  const handleVideoClick = (responses, questions) => {
+    // Vérification que les deux tableaux existent et ont des éléments
+    if (!responses || responses.length === 0) {
+      console.error("Aucune réponse disponible pour ce candidat.");
+      return;
+    }
+
+    if (!questions || questions.length === 0) {
+      console.error("Aucune question disponible pour ce poste.");
+      return;
+    }
+
+    // Associer chaque réponse à une question en fonction de leur index
+    const responsesWithQuestions = responses.map((response, index) => ({
+      video_url: response.video_url,
+      question: questions[index] ? questions[index].question_text : 'Question non trouvée'
+    }));
+
+    setCurrentResponses(responsesWithQuestions);  // Mettre à jour les réponses avec les questions associées
+    setCurrentVideoIndex(0);  // Réinitialiser à la première vidéo
+    setIsModalOpen(true);  // Ouvrir la modal
   };
+
+
 
   const handleDownloadCV = (cvUrl) => {
     const downloadUrl = cvUrl;
@@ -108,7 +127,7 @@ export default function Candidates({ theme, toggleTheme }) {
             handleVideoClick={handleVideoClick}
             handleDownloadCV={handleDownloadCV}
             openConfirmModal={openConfirmModal}
-            fetchCandidates={fetchCandidates}  // Passez bien fetchCandidates comme prop ici
+            fetchCandidates={fetchCandidates}  // Passez fetchCandidates ici
           />
           <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
         </div>

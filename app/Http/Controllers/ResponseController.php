@@ -16,7 +16,7 @@ class ResponseController extends Controller
     {
         $request->validate([
             'candidate_id' => 'required|exists:candidates,id',
-            'video' => 'required|file|max:20000' 
+            'video' => 'required|file|max:20000'
         ]);
 
         $videoPath = $request->file('video')->store('public/videos');
@@ -35,10 +35,25 @@ class ResponseController extends Controller
 
     public function index()
     {
-        $videos = Candidate::with('responses')->get()->pluck('responses.*.video_url')->flatten()->toArray();
-        $totalVideos = count($videos);
+        // Récupérer les candidats avec leurs réponses et les questions de leur post associé
+        $candidates = Candidate::with(['responses', 'post.questions'])->get();
 
-        return response()->json(['videos' => $videos, 'total' => $totalVideos], 200, [], JSON_UNESCAPED_UNICODE);
+        $responsesWithQuestions = $candidates->map(function ($candidate) {
+            $questions = $candidate->post->questions;
+            return $candidate->responses->map(function ($response, $index) use ($questions) {
+                // Associer chaque réponse à une question en fonction de l'index
+                $question = isset($questions[$index]) ? $questions[$index] : null;
+                return [
+                    'video_url' => $response->video_url,
+                    'question' => $question ? $question->question_text : 'Question non trouvée'
+                ];
+            });
+        })->flatten(1);
+
+        return response()->json([
+            'responses' => $responsesWithQuestions,
+            'total' => $responsesWithQuestions->count(),
+        ], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     public function executeStorageScript()

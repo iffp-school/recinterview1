@@ -3,14 +3,13 @@ import Modal from 'react-modal';
 import ReactPlayer from 'react-player';
 
 const VideoModal = ({ isModalOpen, setIsModalOpen, currentResponses, currentVideoIndex, setCurrentVideoIndex }) => {
-  // Si le tableau currentResponses est vide ou si l'index actuel est invalide, ne rien afficher
   if (!currentResponses || currentResponses.length === 0 || !currentResponses[currentVideoIndex]) {
-    return null; // Ne pas rendre la modal si les vidéos ne sont pas disponibles
+    return null;
   }
 
   const currentVideo = currentResponses[currentVideoIndex];
   const currentVideoUrl = `${import.meta.env.VITE_API_BASE_URL}/storage/${currentVideo.video_url}`;
-  const currentQuestion = currentVideo.question ? currentVideo.question.question_text : 'Question non trouvée';  // S'assurer que la question est bien récupérée
+  const currentQuestion = currentVideo.question || 'Question non trouvée';  // Récupérer la question ou afficher un message d'erreur
 
   const handleNext = () => {
     if (currentVideoIndex < currentResponses.length - 1) {
@@ -37,7 +36,9 @@ const VideoModal = ({ isModalOpen, setIsModalOpen, currentResponses, currentVide
         >
           &times;
         </button>
-        <h2 className="text-xl font-bold mb-2">{currentQuestion}</h2> {/* Affiche la question */}
+        {/* Afficher la question */}
+        <h2 className="text-xl font-bold mb-2">{currentQuestion}</h2>
+        {/* Afficher la vidéo */}
         <ReactPlayer url={currentVideoUrl} width="100%" height="100%" controls />
         <div className="flex justify-between mt-4">
           <button

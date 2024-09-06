@@ -15,6 +15,7 @@ import ResponseModal from './ResponseModal';
 
 export default function Posts({ theme, toggleTheme }) {
     const [posts, setPosts] = useState([]);
+    const [currentPostCandidates, setCurrentPostCandidates] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
@@ -50,6 +51,10 @@ export default function Posts({ theme, toggleTheme }) {
             .catch(error => {
                 console.error('Erreur lors de la récupération des posts : ', error);
             });
+    };
+
+    const fetchCandidatesByPost = (postId, postTitle) => {
+        navigate(`/recruiter/candidates?post_id=${postId}&post_title=${encodeURIComponent(postTitle)}`);
     };
 
     useEffect(() => {
@@ -246,7 +251,8 @@ export default function Posts({ theme, toggleTheme }) {
                                 setShowConfirmationModal={setShowConfirmationModal}
                                 handleDetails={handleDetails}
                                 handleSendLink={handleSendLink}
-                                handleOpenResponsesModal={handleOpenResponsesModal}  // Ajoutez cette méthode
+                                handleOpenResponsesModal={handleOpenResponsesModal}
+                                fetchCandidatesByPost={fetchCandidatesByPost}
                             />
                             <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
                         </div>

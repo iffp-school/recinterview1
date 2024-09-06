@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import SideBar from '../SideBar';
 import NavBar from '../NavBar';
 import { axiosClient } from '../../../api/axios';
@@ -20,16 +21,18 @@ export default function Candidates({ theme, toggleTheme }) {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [candidateToDelete, setCandidateToDelete] = useState(null);
+  const location = useLocation();
 
   // Fonction fetchCandidates qui est appelée pour récupérer les candidats
-  const fetchCandidates = (page, searchTerm = '', sortBy = '', sortDirection = 'asc') => {
+  const fetchCandidates = (page, searchTerm = '', sortBy = '', sortDirection = 'asc', postId = null) => {
     axiosClient.get(`/candidates`, {
       params: {
         page,
         limit: 10,
         search: searchTerm,
         sort_by: sortBy,
-        sort_direction: sortDirection
+        sort_direction: sortDirection,
+        post_id: postId
       }
     })
       .then(response => {
@@ -43,8 +46,17 @@ export default function Candidates({ theme, toggleTheme }) {
 
   // Appeler fetchCandidates lors du montage et lors des changements de page/recherche
   useEffect(() => {
-    fetchCandidates(currentPage, recherche, sortBy, sortDirection);
-  }, [currentPage, recherche, sortBy, sortDirection]);
+    const queryParams = new URLSearchParams(location.search); // Pour récupérer les query params
+    const postId = queryParams.get('post_id'); // Obtenir le post_id si présent
+    const postTitle = queryParams.get('post_title'); // Obtenir le post_title si présent
+
+    // Si un titre de poste est passé dans l'URL, pré-remplir la recherche
+    if (postTitle) {
+      setRecherche(postTitle.toLowerCase());
+    }
+
+    fetchCandidates(currentPage, recherche, sortBy, sortDirection, postId); // Filtrer par post_id
+  }, [currentPage, recherche, sortBy, sortDirection, location.search]);
 
   const handleSearch = (e) => {
     setRecherche(e.target.value.toLowerCase());

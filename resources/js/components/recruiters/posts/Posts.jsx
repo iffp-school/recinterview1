@@ -56,6 +56,7 @@ export default function Posts({ theme, toggleTheme }) {
         fetchPosts(currentPage, searchTerm, sortBy, sortDirection);
     }, [currentPage, searchTerm, sortBy, sortDirection]);
 
+
     const handleSearch = (e) => {
         setSearchTerm(e.target.value.toLowerCase());
         setCurrentPage(1);
@@ -69,25 +70,29 @@ export default function Posts({ theme, toggleTheme }) {
 
     const handleSubmit = () => {
         setIsSubmitting(true);
+
         const postData = {
             title: currentPost.title,
             description: currentPost.description,
-            questions: currentPost.questions,
-            recruiter_id: 1
+            questions: currentPost.questions,  // Les questions doivent être présentes ici
+            recruiter_id: 1,
         };
+
+        console.log('Données envoyées au backend :', postData); // Vérifiez que les questions sont incluses ici
 
         axiosClient.post('/posts', postData)
             .then(response => {
                 fetchPosts(currentPage, searchTerm, sortBy, sortDirection);
                 setIsSubmitting(false);
                 setIsModalOpen(false);
-                setCurrentPost({ title: '', description: '', questions: [{ question_text: '', preparation_time: '', response_time: '' }] });
+                setCurrentPost({ title: '', description: '', questions: [] }); // Réinitialiser le state après l'ajout
             })
             .catch(error => {
                 console.error('Erreur lors de l\'ajout du post : ', error);
                 setIsSubmitting(false);
             });
     };
+
 
     const handleEdit = () => {
         setIsSubmitting(true);

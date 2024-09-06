@@ -46,29 +46,28 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'recruiter_id' => 'required|integer',
-            'message_end' => 'nullable|string', // Ajoutez cette ligne
-            'questions' => 'sometimes|array',
+            'message_end' => 'nullable|string',
+            'questions' => 'nullable|array',
             'questions.*.question_text' => 'required_with:questions|string',
-            'questions.*.preparation_time' => 'required_with:questions|integer',
-            'questions.*.response_time' => 'required_with:questions|integer',
+            'questions.*.preparation_time' => 'nullable|integer',
+            'questions.*.response_time' => 'nullable|integer',
         ]);
 
-        $post = Post::create($request->only(['title', 'description', 'recruiter_id', 'message_end'])); // Ajoutez 'message_end'
+        $post = Post::create($request->only(['title', 'description', 'recruiter_id', 'message_end']));
 
         if ($request->has('questions')) {
             foreach ($request->questions as $questionData) {
-                $question = new Question([
+                $post->questions()->create([
                     'question_text' => $questionData['question_text'],
                     'preparation_time' => $questionData['preparation_time'],
                     'response_time' => $questionData['response_time'],
-                    'post_id' => $post->id
                 ]);
-                $question->save();
             }
         }
 
         return response()->json($post->load('questions'), 201);
     }
+
 
 
     public function show($id)

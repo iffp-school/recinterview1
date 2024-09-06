@@ -70,8 +70,17 @@ const PostModal = ({
             return;
         }
         setErrorMessage('');
-        saveQuestion();
+
+        // Ajouter la nouvelle question au tableau des questions
+        setCurrentPost((prevPost) => ({
+            ...prevPost,
+            questions: [...prevPost.questions, newQuestion]
+        }));
+
+        // Réinitialiser les champs de la nouvelle question
+        setNewQuestion({ question_text: '', preparation_time: 30, response_time: 90 });
     };
+
 
     const isNewQuestionFieldsFilled = () => {
         return newQuestion.question_text && newQuestion.preparation_time && newQuestion.response_time;
@@ -102,15 +111,23 @@ const PostModal = ({
     };
 
     const saveQuestion = () => {
+        // Vérifiez si vous êtes en mode édition ou en mode ajout
         if (editingIndex !== null) {
+            // En mode édition, mettez à jour la question existante
             const updatedQuestions = [...post.questions];
             updatedQuestions[editingIndex] = {
-                ...newQuestion,
-                id: post.questions[editingIndex].id, // Assurez-vous que l'ID est conservé pour les questions existantes
+                ...newQuestion, // Mise à jour des champs
+                id: post.questions[editingIndex]?.id, // Conservez l'ID de la question existante
             };
             setCurrentPost({ ...post, questions: updatedQuestions });
             setEditingIndex(null);
+        } else {
+            // En mode ajout, ajoutez la nouvelle question au tableau
+            const updatedQuestions = [...post.questions, { ...newQuestion }];
+            setCurrentPost({ ...post, questions: updatedQuestions });
         }
+
+        // Réinitialisez la nouvelle question après l'ajout ou l'édition
         setNewQuestion({ question_text: '', preparation_time: 30, response_time: 90 });
     };
 

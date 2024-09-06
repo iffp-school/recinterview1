@@ -56,63 +56,52 @@ function Home() {
 
 	return (
 		<div className={`${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} flex flex-col min-h-screen transition-colors duration-300`}>
-			{/* Navigation Bar */}
-			<nav className="flex justify-between items-center py-4 px-6 m-2 shadow-lg rounded-lg md:px-8">
-				<h1 className="text-3xl sm:text-4xl font-bold">
+			<nav className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} flex justify-between items-center py-6 px-8 m-4 shadow-lg rounded-lg`}>
+				<h1 className="text-3xl sm:text-5xl font-bold">
 					Rec<span className="text-blue-500">Inter</span>View
 				</h1>
-				{/* Masquer les autres éléments de la navbar sauf le menu sur les grands écrans mobiles */}
-				<div className="hidden lg:flex items-center space-x-6">
-					{/* Les éléments à masquer sur les grands mobiles */}
-					<div className="hidden xl:flex items-center space-x-6">
-						<a href="#home" className="text-base md:text-lg lg:text-xl font-semibold">Home</a>
-						<a href="#features" className="text-base md:text-lg lg:text-xl font-semibold">Fonctionnalités</a>
-						<a href="#about" className="text-base md:text-lg lg:text-xl font-semibold">À propos de nous</a>
-						<button onClick={toggleModal} className="text-base md:text-lg lg:text-xl font-semibold">Contact</button>
-						<Link to="/login" className="text-base md:text-lg lg:text-xl font-semibold bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow">Espace Recruteur</Link>
-					</div>
-					{/* Menu toggle button visible on smaller screens */}
-					<button onClick={toggleTheme} className="text-lg font-semibold">
-						{theme === 'dark' ? <FaSun /> : <FaMoon />}
-					</button>
-				</div>
-				{/* Menu visible on small to large screens */}
-				<button onClick={toggleMenu} className="block lg:hidden text-lg ml-4 border border-gray-300 px-4 py-2 rounded-lg shadow">
+				<button onClick={toggleMenu} className={`${theme === 'dark' ? 'border-gray-600' : 'border-gray-300'} text-3xl ml-4 border px-6 py-3 rounded-lg shadow`}>
 					Menu
 				</button>
 			</nav>
 
 			{isMenuOpen && (
-				<div className="lg:hidden flex flex-col items-center py-4 space-y-2 shadow-lg rounded-lg bg-white">
-					<a href="#home" className="text-lg sm:text-xl">Home</a>
-					<a href="#features" className="text-lg sm:text-xl">Fonctionnalités</a>
-					<a href="#about" className="text-lg sm:text-xl">À propos de nous</a>
-					<button onClick={toggleModal} className="text-lg sm:text-xl border px-4 py-2 rounded-lg">Contact</button>
-					<Link to="/login" className="text-lg sm:text-xl bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow">Espace Recruteur</Link>
+				<div className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} flex flex-col items-center py-4 space-y-4 shadow-lg rounded-lg`}>
+					<a href="#home" className={`${theme === 'dark' ? 'hover:text-blue-300' : 'hover:text-blue-700'} text-xl font-semibold`}>
+						Home
+					</a>
+					<a href="#features" className={`${theme === 'dark' ? 'hover:text-blue-300' : 'hover:text-blue-700'} text-xl font-semibold`}>
+						Fonctionnalités
+					</a>
+					<a href="#about" className={`${theme === 'dark' ? 'hover:text-blue-300' : 'hover:text-blue-700'} text-xl font-semibold`}>
+						À propos de nous
+					</a>
+					<button onClick={toggleModal} className={`${theme === 'dark' ? 'hover:text-blue-300' : 'hover:text-blue-700'} text-xl font-semibold border px-4 py-2 rounded-lg shadow`}>
+						Contact
+					</button>
+					<Link to="/login" className="text-xl font-semibold bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg shadow">
+						Espace Recruteur
+					</Link>
 				</div>
 			)}
 
-			{/* Hero Section */}
 			<div className="flex flex-col md:flex-row flex-grow justify-center items-center m-4">
 				<div className="w-full md:w-1/2 p-4">
-					<h1 className="text-3xl sm:text-4xl font-bold mb-4">
-						Vidéo pour toutes les étapes du{" "}
-						<span className="text-blue-500">recrutement</span>.
+					<h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+						Vidéo pour toutes les étapes du <span className="text-blue-500">recrutement</span>.
 					</h1>
-					<h3 className="text-lg md:text-xl">RecInterview vous permet de :</h3>
-					<div className="text-lg mb-6">
+					<h3 className="text-xl sm:text-2xl mb-4">RecInterview vous permet de :</h3>
+					<div className="text-lg sm:text-xl mb-6">
 						<p>{currentDisplayPhrase}</p>
 					</div>
 				</div>
 				<div className="w-full md:w-1/2 p-4">
-					<iframe className="w-full aspect-video" src="https://www.youtube.com/embed/3rxns3k9dws" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+					<iframe className="w-full aspect-video" src="https://www.youtube.com/embed/3rxns3k9dws?si=xliYptPIEnFgL-lf" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
 				</div>
 			</div>
 
-			{/* Features Section */}
-			<div id="features" className="bg-gray-200 text-gray-900 flex justify-center items-center py-12 m-4 shadow-lg rounded-lg transition-colors duration-300">
-				{/* Chaque carte prendra toute la largeur sur mobile */}
-				<div className="grid grid-cols-1 gap-6 p-4 lg:grid-cols-1 xl:grid-cols-1">
+			<div id="features" className={`${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-900'} flex justify-center items-center py-16 m-4 shadow-lg rounded-lg transition-colors duration-300`}>
+				<div className="grid grid-cols-1 gap-6 p-4 sm:grid-cols-1">
 					<CardFonctionnalite
 						theme={theme}
 						titre="Entièrement personnalisable"
@@ -146,20 +135,18 @@ function Home() {
 				</div>
 			</div>
 
-			{/* About Section */}
-			<div id="about" className="flex flex-col items-center text-center py-12 px-4">
-				<p className="text-lg sm:text-xl mx-8 mb-4">
+			<div id="about" className="flex flex-col items-center text-center py-16 px-6">
+				<p className="text-lg sm:text-xl md:text-2xl mx-8 mb-4">
 					Une équipe qui comprend le recrutement. Notre équipe est assez unique. Nous gérons également Start In Recruitment et plaçons des commerciaux dans des agences de recrutement. Cela signifie que nous avons construit RecView pour nous-mêmes, en fonction des retours de nos clients - qui se trouvent être des recruteurs.
 				</p>
-				<img src="/images/image.png" alt="About Us" className="w-full h-auto shadow-lg rounded-lg" />
+				<img src="/images/image.png" alt="Votre image" className="w-full h-auto shadow-lg rounded-lg" />
 			</div>
 
-			{/* Footer */}
-			<footer className="bg-gray-800 text-gray-400 text-center text-lg py-4">
+			<footer className="bg-gray-800 text-gray-400 text-center text-base py-4">
 				<p>
-					<a href="#" className="mx-2 hover:text-white">Politique de confidentialité</a>
+					<a href="#" className="mx-4 hover:text-white">Politique de confidentialité</a>
 					{" | "}
-					<a href="#" className="mx-2 hover:text-white">Conditions générales</a>
+					<a href="#" className="mx-4 hover:text-white">Conditions générales</a>
 					{" | "}
 					© 2024 RecInterView, Tous droits réservés
 				</p>
@@ -168,12 +155,11 @@ function Home() {
 	);
 }
 
-// Functional Component for Feature Cards
 function CardFonctionnalite({ titre, description, theme }) {
 	return (
-		<div className={`${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'} p-6 rounded-lg shadow-lg`}>
-			<h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4">{titre}</h2>
-			<p className="text-base sm:text-lg md:text-xl">{description}</p>
+		<div className={`${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'} p-8 rounded-lg shadow-lg`}>
+			<h2 className="text-2xl sm:text-3xl font-semibold mb-6">{titre}</h2>
+			<p className="text-lg sm:text-xl">{description}</p>
 		</div>
 	);
 }

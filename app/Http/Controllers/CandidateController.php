@@ -12,6 +12,7 @@ class CandidateController extends Controller
     {
         $query = Candidate::with(['post.questions', 'responses']);
 
+        // Filtrage par recherche
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -24,12 +25,13 @@ class CandidateController extends Controller
             });
         }
 
+        // Gestion du tri
         if ($request->has('sort_by') && $request->has('sort_direction') && !empty($request->sort_by) && !empty($request->sort_direction)) {
             $sortBy = $request->sort_by;
             $sortDirection = $request->sort_direction;
-            $sortableColumns = ['first_name', 'last_name', 'email', 'phone', 'created_at', 'rating']; // Add 'rating' here
+            $sortableColumns = ['first_name', 'last_name', 'email', 'phone', 'created_at', 'rating', 'post.title']; // Ajout de 'post.title' ici
 
-            if ($sortBy === 'post.title') {
+            if ($sortBy === 'post') {
                 $query->join('posts', 'candidates.post_id', '=', 'posts.id')
                     ->orderBy('posts.title', $sortDirection)
                     ->select('candidates.*');

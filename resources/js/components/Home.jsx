@@ -69,7 +69,7 @@ function Home() {
 					<Link to="/login" className="text-xl font-semibold bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg shadow">
 						Espace Recruteur
 					</Link>
-					<Link to="/admin" className="text-xl font-semibold bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg shadow">
+					<Link to="/login" className="text-xl font-semibold bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg shadow">
 						Espace Administrateur
 					</Link>
 					{/* Dark/Light Mode Toggle */}

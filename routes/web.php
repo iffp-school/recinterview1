@@ -7,6 +7,9 @@ use App\Http\Controllers\RecruiterController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
+
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/execute-storage-script', [ResponseController::class, 'executeStorageScript']);
@@ -17,6 +20,13 @@ Route::get('/candidates/email/{email}', [CandidateController::class, 'getCandida
 Route::post('/responses', [ResponseController::class, 'store']);
 // Routes sécurisées
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/users', [UserController::class, 'index']);
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
+
+    Route::get('/dashboard-data-admin', [DashboardController::class, 'getAdminDashboardData']);
+    Route::get('/dashboard-data-recruiter', [DashboardController::class, 'getRecruiterDashboardData']);
+
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::put('/profile', [AuthController::class, 'updateProfile']);
@@ -32,7 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/responses/{id}', [ResponseController::class, 'show']);
     Route::put('/responses/{id}', [ResponseController::class, 'update']);
     Route::delete('/responses/{id}', [ResponseController::class, 'destroy']);
-   
+
 
     Route::get('/recruiters', [RecruiterController::class, 'index']);
     Route::post('/recruiters', [RecruiterController::class, 'store']);

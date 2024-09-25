@@ -23,4 +23,9 @@ class Recruiter extends Model
     {
         return $this->hasMany(Post::class);
     }
+
+    public function candidates()
+    {
+        return $this->hasManyThrough(Candidate::class, Post::class, 'recruiter_id', 'post_id', 'id', 'id');
+    }
 }

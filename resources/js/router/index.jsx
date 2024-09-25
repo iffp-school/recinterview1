@@ -13,14 +13,17 @@ import Enregistrement from '../components/candidates/Enregistrement.jsx';
 export const LOGIN_ROUTE = '/login';
 const ADMIN_BASE_ROUTE = '/admin';
 const RECRUTEUR_BASE_ROUTE = '/recruiter';
+
+
 export const ADMIN_DASHBOARD_ROUTE = ADMIN_BASE_ROUTE + '/dashboard';
 export const RECRUTEUR_HOME_ROUTE = RECRUTEUR_BASE_ROUTE + '/home';
+
 export const redirectToDashboard = (roleType) => {
   switch (roleType) {
     case 'admin':
-      return (ADMIN_DASHBOARD_ROUTE);
+      return ADMIN_DASHBOARD_ROUTE;
     case 'recruiter':
-      return (RECRUTEUR_HOME_ROUTE);
+      return RECRUTEUR_HOME_ROUTE;
   }
 };
 
@@ -30,8 +33,9 @@ export const router = createBrowserRouter([
     children: [
       { path: '/', element: <Home /> },
       { path: LOGIN_ROUTE, element: <Login /> },
-      { path: RECRUTEUR_HOME_ROUTE, element: <HomeRec /> },
+      { path: RECRUTEUR_BASE_ROUTE + '/home', element: <HomeRec /> },
       { path: RECRUTEUR_BASE_ROUTE + '/dashboard', element: <Dashboard /> },
+      { path: ADMIN_DASHBOARD_ROUTE, element: <Dashboard /> },
       { path: RECRUTEUR_BASE_ROUTE + '/posts', element: <Posts /> },
       { path: RECRUTEUR_BASE_ROUTE + '/new-post', element: <NewPost /> },
       { path: RECRUTEUR_BASE_ROUTE + '/candidates', element: <Candidates /> },

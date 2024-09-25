@@ -5,6 +5,7 @@ import Home from './Home';
 import HomeRec from './recruiters/HomeRec';
 import Login from './recruiters/Login';
 import Dashboard from './recruiters/Dashboard';
+import Users from './admin/Users';
 import Posts from './recruiters/posts/Posts';
 import NewPost from './recruiters/posts/NewPost';
 import Candidates from './recruiters/candidates/Candidates';
@@ -19,42 +20,17 @@ function App() {
     };
 
     const router = createBrowserRouter([
-        {
-            path: '/',
-            element: <Home theme={theme} toggleTheme={toggleTheme} />
-        },
-        {
-            path: '/login',
-            element: <Login theme={theme} toggleTheme={toggleTheme} />
-        },
-        {
-            path: '/recruiter/home',
-            element: <HomeRec theme={theme} toggleTheme={toggleTheme} />
-        },
-        {
-            path: '/recruiter/dashboard',
-            element: <Dashboard theme={theme} toggleTheme={toggleTheme} />
-        },
-        {
-            path: '/recruiter/posts',
-            element: <Posts theme={theme} toggleTheme={toggleTheme} />
-        },
-        {
-            path: '/recruiter/new-post',
-            element: <NewPost theme={theme} toggleTheme={toggleTheme} />
-        },
-        {
-            path: '/recruiter/candidates',
-            element: <Candidates theme={theme} toggleTheme={toggleTheme} />
-        },
-        {
-            path: '/profil/:postRef',
-            element: <Profil theme={theme} toggleTheme={toggleTheme} />
-        },
-        {
-            path: '/enregistrement',
-            element: <Enregistrement theme={theme} toggleTheme={toggleTheme} />
-        }
+        { path: '/', element: <Home theme={theme} toggleTheme={toggleTheme} /> },
+        { path: '/login', element: <Login theme={theme} toggleTheme={toggleTheme} /> },
+        { path: '/recruiter/home', element: <HomeRec theme={theme} toggleTheme={toggleTheme} /> },
+        { path: '/recruiter/dashboard', element: <Dashboard theme={theme} toggleTheme={toggleTheme} /> },
+        { path: '/admin/dashboard', element: <Dashboard theme={theme} toggleTheme={toggleTheme} /> },
+        { path: '/admin/users', element: <Users theme={theme} toggleTheme={toggleTheme} /> },
+        { path: '/recruiter/posts', element: <Posts theme={theme} toggleTheme={toggleTheme} /> },
+        { path: '/recruiter/new-post', element: <NewPost theme={theme} toggleTheme={toggleTheme} /> },
+        { path: '/recruiter/candidates', element: <Candidates theme={theme} toggleTheme={toggleTheme} /> },
+        { path: '/profil/:postRef', element: <Profil theme={theme} toggleTheme={toggleTheme} /> },
+        { path: '/enregistrement', element: <Enregistrement theme={theme} toggleTheme={toggleTheme} /> }
     ]);
 
     return <RouterProvider router={router} />;

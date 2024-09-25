@@ -39,12 +39,20 @@ export default function Login() {
     try {
       const response = await axiosClient.post('/login', values);
       localStorage.setItem('token', response.data.token);
-      navigate(redirectToDashboard('recruiter'));
+      localStorage.setItem('role', response.data.role);
+
+      // Redirection basée sur le rôle de l'utilisateur 
+      if (response.data.role === 'administrateur') {
+        navigate(redirectToDashboard('admin'));
+      } else if (response.data.role === 'recruteur') {
+        navigate(redirectToDashboard('recruiter'));
+      }
     } catch (error) {
       setErrorMessage('Invalid Credentials');
       setError('email', { type: 'manual', message: 'Invalid Credentials' });
     }
   };
+
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -60,7 +68,7 @@ export default function Login() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} w-full max-w-md p-8 rounded-lg shadow-md transition-colors duration-300`}>
           <h2 className="text-2xl font-bold text-center mb-6">Connexion</h2>
-          
+
           {/* Affichage des erreurs globales */}
           {errorMessage && !errors.password && (
             <div className="bg-red-500 text-white p-2 rounded mb-4">

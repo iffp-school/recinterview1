@@ -7,16 +7,24 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
 
-   public function up()
+    public function up()
     {
+        // Supprimer la contrainte de clé étrangère existante si elle existe
         Schema::table('candidates', function (Blueprint $table) {
-            // Mettre à jour le champ `post_id` pour qu'il soit non nul
-            $table->unsignedBigInteger('post_id')->nullable(false)->change();
+            $table->dropForeign(['post_id']);
+        });
 
-            // Ajouter de nouveau la contrainte de clé étrangère
+        // Modifier la colonne 'post_id' pour s'assurer qu'elle est bien NOT NULL
+        Schema::table('candidates', function (Blueprint $table) {
+            $table->unsignedBigInteger('post_id')->nullable(false)->change();
+        });
+
+        // Ajouter la contrainte de clé étrangère
+        Schema::table('candidates', function (Blueprint $table) {
             $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
         });
     }
+
     public function down()
     {
         Schema::table('candidates', function (Blueprint $table) {

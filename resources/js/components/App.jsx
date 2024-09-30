@@ -11,6 +11,7 @@ import NewPost from './recruiters/posts/NewPost';
 import Candidates from './recruiters/candidates/Candidates';
 import Profil from './candidates/Profil';
 import Enregistrement from './candidates/Enregistrement';
+import Interviews from './admin/Interviews';
 
 function App() {
     const [theme, setTheme] = useState('light');
@@ -30,7 +31,8 @@ function App() {
         { path: '/recruiter/new-post', element: <NewPost theme={theme} toggleTheme={toggleTheme} /> },
         { path: '/recruiter/candidates', element: <Candidates theme={theme} toggleTheme={toggleTheme} /> },
         { path: '/profil/:postRef', element: <Profil theme={theme} toggleTheme={toggleTheme} /> },
-        { path: '/enregistrement', element: <Enregistrement theme={theme} toggleTheme={toggleTheme} /> }
+        { path: '/enregistrement', element: <Enregistrement theme={theme} toggleTheme={toggleTheme} /> },
+        { path: '/admin/interviews', element: <Interviews theme={theme} toggleTheme={toggleTheme} /> } // Ajout de la route pour les entretiens
     ]);
 
     return <RouterProvider router={router} />;

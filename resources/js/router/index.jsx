@@ -9,6 +9,7 @@ import NewPost from '../components/recruiters/posts/NewPost.jsx';
 import Candidates from '../components/recruiters/candidates/Candidates.jsx';
 import Profil from '../components/candidates/Profil.jsx';
 import Enregistrement from '../components/candidates/Enregistrement.jsx';
+import Interviews from '../components/admin/Interviews.jsx';
 
 export const LOGIN_ROUTE = '/login';
 const ADMIN_BASE_ROUTE = '/admin';
@@ -36,6 +37,7 @@ export const router = createBrowserRouter([
       { path: RECRUTEUR_BASE_ROUTE + '/home', element: <HomeRec /> },
       { path: RECRUTEUR_BASE_ROUTE + '/dashboard', element: <Dashboard /> },
       { path: ADMIN_DASHBOARD_ROUTE, element: <Dashboard /> },
+      { path: ADMIN_BASE_ROUTE+'interviews', element: <Interviews /> },
       { path: RECRUTEUR_BASE_ROUTE + '/posts', element: <Posts /> },
       { path: RECRUTEUR_BASE_ROUTE + '/new-post', element: <NewPost /> },
       { path: RECRUTEUR_BASE_ROUTE + '/candidates', element: <Candidates /> },

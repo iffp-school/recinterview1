@@ -32,7 +32,7 @@ function App() {
         { path: '/recruiter/candidates', element: <Candidates theme={theme} toggleTheme={toggleTheme} /> },
         { path: '/profil/:postRef', element: <Profil theme={theme} toggleTheme={toggleTheme} /> },
         { path: '/enregistrement', element: <Enregistrement theme={theme} toggleTheme={toggleTheme} /> },
-        { path: '/admin/interviews', element: <Interviews theme={theme} toggleTheme={toggleTheme} /> } // Ajout de la route pour les entretiens
+        { path: '/admin/interviews', element: <Interviews theme={theme} toggleTheme={toggleTheme} /> } // Route ajoutée pour la gestion des entretiens
     ]);
 
     return <RouterProvider router={router} />;

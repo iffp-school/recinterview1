@@ -22,7 +22,6 @@ const Interviews = ({ theme, toggleTheme }) => {
                         search: searchTerm
                     }
                 });
-                console.log('Interviews Data:', response.data.interviews);
                 setInterviews(response.data.interviews || []);
                 setTotalPages(response.data.total_pages || 1);
                 setLoading(false);

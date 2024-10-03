@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Candidate;
-use Illuminate\Support\Facades\Log;
 
 class InterviewController extends Controller
 {
@@ -32,7 +31,6 @@ class InterviewController extends Controller
             ->where('rating', '>=', 3)
             ->paginate($perPage);
 
-        Log::info('Completed Interviews Data:', [$completedInterviewsQuery]);
 
         $completedInterviews = $completedInterviewsQuery->items();
 
@@ -49,7 +47,6 @@ class InterviewController extends Controller
             ];
         }, $completedInterviews);
 
-        Log::info('Formatted Completed Interviews:', $completedInterviews);
 
         return response()->json([
             'interviews' => $completedInterviews,

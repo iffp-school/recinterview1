@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Recruiter;
 
 class UserController extends Controller
 {
@@ -81,50 +82,56 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Create User
-     * @param Request $request
-     * @return User 
-     */
-    public function createUser(Request $request)
+    public function store(Request $request)
     {
+        $validateUser = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:6',
+                'company_name' => 'required|string'
+            ]
+        );
+
+        if ($validateUser->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validateUser->errors()
+            ], 401);
+        }
+
         try {
-            //Validated
-            $validateUser = Validator::make(
-                $request->all(),
-                [
-                    'name' => 'required',
-                    'email' => 'required|email|unique:users,email',
-                    'password' => 'required'
-                ]
-            );
-
-            if ($validateUser->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'validation error',
-                    'errors' => $validateUser->errors()
-                ], 401);
-            }
-
+            // Créer l'utilisateur avec un rôle recruteur
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password)
+                'password' => Hash::make($request->password),
+                'role' => 'recruiter' // Assigner le rôle 'recruiter'
+            ]);
+
+            // Créer l'enregistrement du recruteur associé
+            $recruiter = Recruiter::create([
+                'user_id' => $user->id,
+                'company_name' => $request->company_name,
             ]);
 
             return response()->json([
                 'status' => true,
-                'message' => 'User Created Successfully',
-                'token' => $user->createToken("API TOKEN")->plainTextToken
-            ], 200);
-        } catch (\Throwable $th) {
+                'message' => 'Recruteur créé avec succès',
+                'user' => $user,
+                'recruiter' => $recruiter
+            ], 201);
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => $th->getMessage()
+                'message' => 'Erreur lors de la création du recruteur',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
+
 
     /**
      * Login The User

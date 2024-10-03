@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaEnvelope } from 'react-icons/fa'; // Import de l'icône d'envoi d'email
 import { useLocation } from 'react-router-dom';
 import SideBar from '../recruiters/SideBar';
 import NavBar from '../recruiters/NavBar';
@@ -8,6 +8,8 @@ import UserTable from './UserTable';
 import ConfirmationModal from '../recruiters/common/ConfirmationModal';
 import UserSearchBar from './UserSearchBar';
 import Pagination from '../recruiters/common/Pagination';
+import AddRecruiterModal from './AddRecruiterModal'; // Importer la modal pour ajouter un recruteur
+import EmailModal from './EmailModal'; // Importer la modal pour l'envoi d'emails
 
 export default function Users({ theme, toggleTheme }) {
     const [users, setUsers] = useState([]);
@@ -18,6 +20,9 @@ export default function Users({ theme, toggleTheme }) {
     const [sortDirection, setSortDirection] = useState('asc');
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
+    const [isEmailModalOpen, setIsEmailModalOpen] = useState(false); // Pour ouvrir/fermer la modal d'email
+    const [userToEmail, setUserToEmail] = useState(null); // L'utilisateur auquel envoyer l'email
+    const [isAddRecruiterModalOpen, setIsAddRecruiterModalOpen] = useState(false);
 
     const fetchUsers = (page, searchTerm = '', sortBy = '', sortDirection = 'asc') => {
         axiosClient.get(`/users`, {
@@ -75,6 +80,12 @@ export default function Users({ theme, toggleTheme }) {
             });
     };
 
+    // Fonction pour ouvrir la modal d'email
+    const openEmailModal = (user) => {
+        setUserToEmail(user);
+        setIsEmailModalOpen(true);
+    };
+
     return (
         <div className={`${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} flex flex-col md:flex-row h-screen transition-colors duration-300`}>
             <SideBar theme={theme} />
@@ -85,7 +96,9 @@ export default function Users({ theme, toggleTheme }) {
                         {/* Conteneur flex pour la barre de recherche et l'icône plus */}
                         <div className="flex items-center gap-2 w-full md:w-auto">
                             <UserSearchBar searchTerm={searchTerm} handleSearch={handleSearch} />
-                            <button className="bg-blue-500 text-white px-4 py-2 mb-4 rounded hover:bg-blue-600 flex items-center gap-1 text-lg">
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2 mb-4 rounded hover:bg-blue-600 flex items-center gap-1 text-lg"
+                                onClick={() => setIsAddRecruiterModalOpen(true)}>
                                 <FaPlus />
                             </button>
                         </div>
@@ -96,7 +109,8 @@ export default function Users({ theme, toggleTheme }) {
                         sortDirection={sortDirection}
                         handleSort={handleSort}
                         openConfirmModal={openConfirmModal}
-                        theme={theme}  // Passer la prop theme ici
+                        openEmailModal={openEmailModal} // Nouvelle prop pour ouvrir la modal d'email
+                        theme={theme}
                     />
                     <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
                 </div>
@@ -107,6 +121,18 @@ export default function Users({ theme, toggleTheme }) {
                 confirmAction={confirmDeleteUser}
                 message="Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
             />
+            <AddRecruiterModal
+                isOpen={isAddRecruiterModalOpen}
+                onClose={() => setIsAddRecruiterModalOpen(false)}
+                fetchUsers={fetchUsers}
+            />
+            {/* Email Modal */}
+            <EmailModal
+                isOpen={isEmailModalOpen}
+                onClose={() => setIsEmailModalOpen(false)}
+                recipientEmail={userToEmail ? userToEmail.email : ''}
+            />
+
         </div>
     );
 }

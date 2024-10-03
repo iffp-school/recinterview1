@@ -22,6 +22,7 @@ const Interviews = ({ theme, toggleTheme }) => {
                         search: searchTerm
                     }
                 });
+                console.log('Interviews Data:', response.data.interviews);
                 setInterviews(response.data.interviews || []);
                 setTotalPages(response.data.total_pages || 1);
                 setLoading(false);
@@ -47,12 +48,10 @@ const Interviews = ({ theme, toggleTheme }) => {
             <SideBar theme={theme} />
 
             {/* Main Content */}
-            <div className="flex-1 p-6">
+            <div className="flex-1 p-2">
                 {/* Navbar */}
                 <NavBar theme={theme} toggleTheme={toggleTheme} />
 
-                {/* Title */}
-                <h2 className="text-2xl font-bold mb-4">Gestion des Entretiens Terminés</h2>
 
                 {/* Search Bar */}
                 <UserSearchBar searchTerm={searchTerm} handleSearch={handleSearch} />

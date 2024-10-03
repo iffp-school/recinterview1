@@ -27,12 +27,13 @@ class InterviewController extends Controller
 
     public function getCompletedInterviews(Request $request)
     {
-        $perPage = $request->input('per_page', 10); // Nombre d'éléments par page, par défaut 10
+        $perPage = $request->input('per_page', 10);
         $completedInterviewsQuery = Candidate::with(['post.recruiter.user'])
-            ->where('rating', '>=', 3) // Considérer les entretiens terminés avec un rating >= 3
+            ->where('rating', '>=', 3)
             ->paginate($perPage);
 
-        // Utiliser la méthode map directement sur les éléments de la collection
+        Log::info('Completed Interviews Data:', [$completedInterviewsQuery]);
+
         $completedInterviews = $completedInterviewsQuery->items();
 
         $completedInterviews = array_map(function ($candidate) {
@@ -48,12 +49,15 @@ class InterviewController extends Controller
             ];
         }, $completedInterviews);
 
+        Log::info('Formatted Completed Interviews:', $completedInterviews);
+
         return response()->json([
             'interviews' => $completedInterviews,
             'total_pages' => $completedInterviewsQuery->lastPage(),
             'current_page' => $completedInterviewsQuery->currentPage(),
         ], 200);
     }
+
 
 
     public function getPendingInterviews(Request $request)

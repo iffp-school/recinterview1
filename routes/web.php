@@ -25,11 +25,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users', [UserController::class, 'index']);
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
-    Route::get('/admin/interviews/statistics', [InterviewController::class, 'getInterviewStatistics']); // Statistiques globales
-    Route::get('/admin/interviews/completed', [InterviewController::class, 'getCompletedInterviews']); // Entretiens terminés
-    Route::get('/admin/interviews/pending', [InterviewController::class, 'getPendingInterviews']); // Entretiens en attente
-    Route::get('/admin/recruiters/activities', [InterviewController::class, 'getRecruiterActivities']); // Activités récentes des recruteurs
-    Route::get('/admin/interviews/{id}/responses', [InterviewController::class, 'viewCompletedInterviewResponses']); // Visualiser les réponses d'un entretien terminé
+    // Route::get('/admin/interviews/statistics', [InterviewController::class, 'getInterviewStatistics']); // Statistiques globales
+    Route::get('/admin/interviews', [InterviewController::class, 'getCompletedInterviews']); // Entretiens terminés
+    // Route::get('/admin/interviews/pending', [InterviewController::class, 'getPendingInterviews']); // Entretiens en attente
+    // Route::get('/admin/recruiters/activities', [InterviewController::class, 'getRecruiterActivities']); // Activités récentes des recruteurs
+    // Route::get('/admin/interviews/{id}/responses', [InterviewController::class, 'viewCompletedInterviewResponses']); // Visualiser les réponses d'un entretien terminé
+    
+    Route::get('/dashboard-data-admin', [DashboardController::class, 'getAdminDashboardData']);
+    Route::get('/dashboard-data-recruiter', [DashboardController::class, 'getRecruiterDashboardData']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);

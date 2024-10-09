@@ -79,4 +79,28 @@ class ResponseController extends Controller
         return response('Script executed successfully', 200)
             ->header('Content-Type', 'text/plain');
     }
+
+    // Méthode pour mettre à jour la note d'une réponse
+    public function updateRating(Request $request, $id)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        $response = Response::findOrFail($id);
+        $response->rating = $request->input('rating');
+        $response->save();
+
+        // Calculer la nouvelle moyenne des notes pour le candidat
+        $candidate = $response->candidate;
+        $averageRating = $candidate->responses()->avg('rating');
+        $candidate->rating = round($averageRating, 1); // arrondir à une décimale
+        $candidate->save();
+
+        return response()->json([
+            'message' => 'Note mise à jour avec succès.',
+            'rating' => $response->rating,
+            'candidate_average_rating' => $candidate->rating // Retourner la nouvelle note moyenne du candidat
+        ], 200);
+    }
 }

@@ -16,7 +16,7 @@ const formSchema = z.object({
   first_name: z.string().nonempty("Prénom requis"),
   last_name: z.string().nonempty("Nom requis"),
   email: z.string().email("Email invalide"),
-  phone: z.string().nullable(),
+  phone: z.string().regex(/^(\+33|0)(6|7)\d{8}$/, "Numéro de téléphone invalide. Utilisez un format 06 ou 07 avec 10 chiffres"),
   cv: z.instanceof(FileList).refine((files) => files.length > 0, "CV requis"),
   post_id: z.string()
 });

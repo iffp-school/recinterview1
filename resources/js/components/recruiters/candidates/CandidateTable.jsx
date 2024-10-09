@@ -2,15 +2,13 @@ import React from 'react';
 import { FaTrash, FaPlayCircle, FaFilePdf, FaSort, FaSortUp, FaSortDown, FaStar } from 'react-icons/fa';
 import { axiosClient } from '../../../api/axios';  // Assurez-vous d'importer axiosClient
 
-const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleVideoClick, handleDownloadCV, openConfirmModal, fetchCandidates }) => {
+const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleVideoClick, handleDownloadCV, openConfirmModal }) => {
 
-	const handleRatingChange = async (candidateId, newRating) => {
-		try {
-			await axiosClient.put(`/candidates/${candidateId}/rating`, { rating: newRating });
-			fetchCandidates(); // Appel à fetchCandidates après la mise à jour de la note
-		} catch (error) {
-			console.error('Erreur lors de la mise à jour de la note:', error);
-		}
+	// Fonction pour calculer la moyenne des notes des vidéos pour chaque candidat
+	const calculateAverageRating = (responses) => {
+		const totalRating = responses.reduce((sum, response) => sum + (response.rating || 0), 0);
+		const totalRatedResponses = responses.filter(response => response.rating).length;
+		return totalRatedResponses > 0 ? (totalRating / totalRatedResponses).toFixed(1) : 0;
 	};
 
 	return (
@@ -50,7 +48,7 @@ const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleV
 								Réponses
 							</th>
 							<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-								Note
+								Note Moyenne
 							</th>
 							<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
 								Actions
@@ -95,12 +93,18 @@ const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleV
 										<FaPlayCircle className="text-blue-500 text-2xl cursor-pointer" onClick={() => handleVideoClick(candidate.responses, candidate.post.questions)} />
 									)}
 								</td>
+								{/* Affichage de la moyenne des étoiles */}
 								<td className="px-6 py-4 whitespace-nowrap">
 									<div className="flex items-center space-x-1">
 										{[...Array(5)].map((_, starIndex) => (
-											<FaStar key={starIndex} className={`cursor-pointer ${starIndex < candidate.rating ? 'text-yellow-500' : 'text-gray-300'}`} onClick={() => handleRatingChange(candidate.id, starIndex + 1)} />
+											<FaStar
+												key={starIndex}
+												className={`cursor-pointer ${starIndex < calculateAverageRating(candidate.responses) ? 'text-yellow-500' : 'text-gray-300'}`}
+											// Les étoiles ne sont pas cliquables ici
+											/>
 										))}
 									</div>
+									<p className="text-sm text-gray-700 mt-1">Moyenne: {calculateAverageRating(candidate.responses)}</p>
 								</td>
 								<td className="px-6 py-4 whitespace-nowrap">
 									<button onClick={() => openConfirmModal(candidate.id)} className="text-red-500 hover:text-red-700">
@@ -144,7 +148,10 @@ const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleV
 							)}
 							<div className="flex items-center space-x-1">
 								{[...Array(5)].map((_, starIndex) => (
-									<FaStar key={starIndex} className={`cursor-pointer ${starIndex < candidate.rating ? 'text-yellow-500' : 'text-gray-300'}`} onClick={() => handleRatingChange(candidate.id, starIndex + 1)} />
+									<FaStar
+										key={starIndex}
+										className={`cursor-pointer ${starIndex < calculateAverageRating(candidate.responses) ? 'text-yellow-500' : 'text-gray-300'}`}
+									/>
 								))}
 							</div>
 						</div>

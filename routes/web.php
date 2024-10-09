@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/responses/{id}', [ResponseController::class, 'show']);
     Route::put('/responses/{id}', [ResponseController::class, 'update']);
     Route::delete('/responses/{id}', [ResponseController::class, 'destroy']);
+    Route::put('/responses/{id}/rating', [ResponseController::class, 'updateRating']);
 
 
     Route::get('/recruiters', [RecruiterController::class, 'index']);

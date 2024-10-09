@@ -25,7 +25,13 @@ export default function ProfilForm({ post, theme, onSubmit, serverErrors }) {
                 {errors.last_name && <p className="text-red-500 text-sm">{errors.last_name.message}</p>}
             </div>
             <div className="mb-4">
-                <input id="email" type="email" placeholder="Email" {...register("email")} className={`${theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-900"} p-2 rounded-lg w-full`} />
+                <input id="email" type="email" placeholder="Email" {...register("email", {
+                    required: "Email requis",
+                    pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "Email invalide"
+                    }
+                })} className={`${theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-900"} p-2 rounded-lg w-full`} />
                 {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
                 {serverErrors.email && <p className="text-red-500 text-sm">{serverErrors.email}</p>}
             </div>
@@ -39,8 +45,8 @@ export default function ProfilForm({ post, theme, onSubmit, serverErrors }) {
                         {...register("phone", {
                             required: "Numéro de téléphone requis",
                             pattern: {
-                                value: /^(\+33|0)[1-9](\d{2}){4}$/,
-                                message: "Numéro de téléphone invalide"
+                                value: /^(\+33|0)(6|7)\d{8}$/,
+                                message: "Numéro de téléphone invalide. Utilisez un format 06 ou 07 avec 10 chiffres."
                             }
                         })}
                         className={`${theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-900"} p-2 rounded-r-lg w-full`}

@@ -20,6 +20,7 @@ Route::post('/candidates', [CandidateController::class, 'store']);
 Route::get('/posts/{id}', [PostController::class, 'show']);
 Route::get('/candidates/email/{email}', [CandidateController::class, 'getCandidateByEmail']);
 Route::post('/responses', [ResponseController::class, 'store']);
+Route::get('/candidates/{id}/data', [CandidateController::class, 'show']);
 // Routes sécurisées
 Route::middleware('auth:sanctum')->group(function () {
 

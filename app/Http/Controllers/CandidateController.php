@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Candidate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Question;
 
 class CandidateController extends Controller
 {
@@ -87,10 +88,32 @@ class CandidateController extends Controller
     }
 
 
+    // Méthode pour récupérer les informations détaillées d'un candidat
+    // Méthode pour récupérer les informations détaillées d'un candidat
     public function show($id)
     {
-        return Candidate::findOrFail($id);
+        // Récupérer le candidat avec le poste associé et les réponses
+        $candidate = Candidate::with(['post', 'responses'])->find($id);
+
+        if (!$candidate) {
+            return response()->json(['message' => 'Candidat non trouvé'], 404);
+        }
+
+        // Récupérer les questions associées au poste du candidat
+        $questions = Question::where('post_id', $candidate->post_id)->get();
+
+        // Associer chaque réponse avec une question en fonction de l'ordre
+        $candidate->responses->transform(function ($response, $index) use ($questions) {
+            // Associer la question en fonction de l'index, si elle existe
+            $response->question = $questions[$index]->question_text ?? 'Question non trouvée';
+            return $response;
+        });
+
+        // Retourner les données du candidat en JSON
+        return response()->json($candidate);
     }
+
+
 
     public function update(Request $request, $id)
     {

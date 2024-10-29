@@ -1,6 +1,6 @@
 import React from 'react';
-import { FaTrash, FaPlayCircle, FaFilePdf, FaSort, FaSortUp, FaSortDown, FaStar } from 'react-icons/fa';
-import { axiosClient } from '../../../api/axios';  // Assurez-vous d'importer axiosClient
+import { FaTrash, FaPlayCircle, FaFilePdf, FaSort, FaSortUp, FaSortDown, FaStar, FaFileAlt } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleVideoClick, handleDownloadCV, openConfirmModal }) => {
 
@@ -48,7 +48,10 @@ const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleV
 								Réponses
 							</th>
 							<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-								Note Moyenne
+								Moyenne
+							</th>
+							<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+								Présentation
 							</th>
 							<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
 								Actions
@@ -105,6 +108,11 @@ const CandidateTable = ({ candidates, sortBy, sortDirection, handleSort, handleV
 										))}
 									</div>
 									<p className="text-sm text-gray-700 mt-1">Moyenne: {calculateAverageRating(candidate.responses)}</p>
+								</td>
+								<td className="px-6 py-4 whitespace-nowrap">
+									<Link to={`/candidates/${candidate.id}/presentation`}>
+										<FaFileAlt className="text-blue-500 hover:text-blue-700" />
+									</Link>
 								</td>
 								<td className="px-6 py-4 whitespace-nowrap">
 									<button onClick={() => openConfirmModal(candidate.id)} className="text-red-500 hover:text-red-700">

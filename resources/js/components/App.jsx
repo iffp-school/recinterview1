@@ -12,6 +12,7 @@ import Candidates from './recruiters/candidates/Candidates';
 import Profil from './candidates/Profil';
 import Enregistrement from './candidates/Enregistrement';
 import Interviews from './admin/Interviews';
+import CandidatePresentation from './recruiters/candidates/CandidatePresentation';
 
 function App() {
     const [theme, setTheme] = useState('light');
@@ -32,7 +33,8 @@ function App() {
         { path: '/recruiter/candidates', element: <Candidates theme={theme} toggleTheme={toggleTheme} /> },
         { path: '/profil/:postRef', element: <Profil theme={theme} toggleTheme={toggleTheme} /> },
         { path: '/enregistrement', element: <Enregistrement theme={theme} toggleTheme={toggleTheme} /> },
-        { path: '/admin/interviews', element: <Interviews theme={theme} toggleTheme={toggleTheme} /> } // Route ajoutée pour la gestion des entretiens
+        { path: '/admin/interviews', element: <Interviews theme={theme} toggleTheme={toggleTheme} /> }, // Route ajoutée pour la gestion des entretiens
+        { path: '/candidates/:id/presentation', element: <CandidatePresentation /> },
     ]);
 
     return <RouterProvider router={router} />;

@@ -95,4 +95,4 @@ Accédez à votre application en ouvrant votre navigateur et en allant à l'adre
    npm run build
    ```
 2. Déployez les fichiers sur votre serveur de production.
-3. Assurez-vous que le serveur web pointe vers le répertoire `public` de Laravel.
+3. Assurez-vous que le serveur web pointe vers le répertoire `public` de Laravel. 

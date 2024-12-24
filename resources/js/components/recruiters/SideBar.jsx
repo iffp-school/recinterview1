@@ -51,7 +51,7 @@ export default function SideBar({ theme }) {
                         </li>
                         <li className="mb-2">
                             <Link to="/recruiter/candidates" className={`block w-full ${theme === 'dark' ? 'bg-blue-700 hover:bg-blue-600' : 'bg-blue-500 hover:bg-blue-400'} py-2 px-4 rounded mb-1 text-center md:text-left transition-colors duration-300 font-bold text-white`}>
-                                Candidates
+                                Candidats
                             </Link>
                         </li>
                         <li className="mb-2">

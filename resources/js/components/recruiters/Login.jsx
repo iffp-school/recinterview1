@@ -37,6 +37,7 @@ export default function Login() {
   // Gestionnaire de soumission du formulaire
   const onSubmit = async values => {
     try {
+      await axiosClient.get('/sanctum/csrf-cookie'); 
       const response = await axiosClient.post('/login', values);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', response.data.role);

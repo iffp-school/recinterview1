@@ -67,10 +67,7 @@ function Home() {
 					<a href="#about" className="text-xl font-semibold hover:text-blue-500">À propos de nous</a>
 					<a onClick={toggleModal} className="cursor-pointer text-xl font-semibold hover:text-blue-500">Contact</a>
 					<Link to="/login" className="text-xl font-semibold bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg shadow">
-						Espace Recruteur
-					</Link>
-					<Link to="/login" className="text-xl font-semibold bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg shadow">
-						Espace Administrateur
+						Connexion
 					</Link>
 					{/* Dark/Light Mode Toggle */}
 					<button onClick={toggleTheme} className="ml-4 text-xl p-2 border rounded-lg">

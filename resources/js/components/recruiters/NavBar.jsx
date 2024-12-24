@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { FaUserCircle, FaSignOutAlt, FaSun, FaMoon } from 'react-icons/fa';
+import { FaUserCircle, FaSignOutAlt, FaSun, FaMoon, FaQuestionCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { axiosClient } from '../../api/axios';
 import ProfileModal from './candidates/ProfileModal';
+import HelpModal from './HelpModal';
 
 export default function NavBar({ theme, toggleTheme }) {
     const navigate = useNavigate();
     const [isProfileModalOpen, setProfileModalOpen] = useState(false);
+    const [isHelpModalOpen, setHelpModalOpen] = useState(false);
 
     const handleLogout = async () => {
         try {
@@ -31,6 +33,12 @@ export default function NavBar({ theme, toggleTheme }) {
             <nav className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} w-full p-4 flex justify-end items-center transition-colors duration-300 shadow-lg rounded-lg`}>
                 <button
                     className={`${theme === 'dark' ? 'text-white hover:text-gray-400' : 'text-gray-900 hover:text-gray-700'} text-xl mx-2`}
+                    onClick={() => setHelpModalOpen(true)}
+                >
+                    <FaQuestionCircle />
+                </button>
+                <button
+                    className={`${theme === 'dark' ? 'text-white hover:text-gray-400' : 'text-gray-900 hover:text-gray-700'} text-xl mx-2`}
                     onClick={handleProfile}
                 >
                     <FaUserCircle />
@@ -49,6 +57,7 @@ export default function NavBar({ theme, toggleTheme }) {
                 </button>
             </nav>
             <ProfileModal isOpen={isProfileModalOpen} onClose={() => setProfileModalOpen(false)} />
+            <HelpModal isOpen={isHelpModalOpen} onClose={() => setHelpModalOpen(false)} />
         </>
     );
 }

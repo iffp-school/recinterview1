@@ -1,6 +1,6 @@
 import React from 'react';
 import { BsPencilSquare, BsTrash, BsInfoCircleFill, BsSend } from 'react-icons/bs';
-import { FaPlayCircle, FaUser, FaSort, FaSortDown, FaSortUp } from 'react-icons/fa';
+import { FaPlayCircle, FaUsers, FaSort, FaSortDown, FaSortUp } from 'react-icons/fa';
 
 const PostTable = ({ posts, sortBy, sortDirection, handleSort, handleOpenResponsesModal, fetchCandidatesByPost, setCurrentPost, setIsModalOpen, setPostIdToDelete, setShowConfirmationModal, handleDetails, handleSendLink }) => (
 	<>
@@ -41,7 +41,7 @@ const PostTable = ({ posts, sortBy, sortDirection, handleSort, handleOpenRespons
 							</td>
 							<td className="px-6 py-4 whitespace-nowrap">
 								<button className="text-blue-600 hover:text-blue-900 text-xl" onClick={() => fetchCandidatesByPost(post.id, post.title)}>
-									<FaUser />
+									<FaUsers />
 								</button>
 							</td>
 							<td className="px-6 py-4 whitespace-nowrap">
@@ -91,7 +91,7 @@ const PostTable = ({ posts, sortBy, sortDirection, handleSort, handleOpenRespons
 							<FaPlayCircle />
 						</button>
 						<button className="text-blue-600 hover:text-blue-900 text-xl" onClick={() => fetchCandidatesByPost(post.id, post.title)}>
-							<FaUser />
+							<FaUsers />
 						</button>
 					</div>
 					<div className="text-sm text-gray-600 mb-2">

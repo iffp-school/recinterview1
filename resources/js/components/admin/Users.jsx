@@ -10,6 +10,7 @@ import UserSearchBar from './UserSearchBar';
 import Pagination from '../recruiters/common/Pagination';
 import AddRecruiterModal from './AddRecruiterModal'; // Importer la modal pour ajouter un recruteur
 import EmailModal from './EmailModal'; // Importer la modal pour l'envoi d'emails
+import EditUserModal from './EditUserModal'; // Importer la modal
 
 export default function Users({ theme, toggleTheme }) {
     const [users, setUsers] = useState([]);
@@ -23,6 +24,8 @@ export default function Users({ theme, toggleTheme }) {
     const [isEmailModalOpen, setIsEmailModalOpen] = useState(false); // Pour ouvrir/fermer la modal d'email
     const [userToEmail, setUserToEmail] = useState(null); // L'utilisateur auquel envoyer l'email
     const [isAddRecruiterModalOpen, setIsAddRecruiterModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [userToEdit, setUserToEdit] = useState(null);
 
     const fetchUsers = (page, searchTerm = '', sortBy = '', sortDirection = 'asc') => {
         axiosClient.get(`/users`, {
@@ -50,6 +53,16 @@ export default function Users({ theme, toggleTheme }) {
     const handleSearch = (e) => {
         setSearchTerm(e.target.value.toLowerCase());
         setCurrentPage(1);
+    };
+
+    const openEditModal = (user) => {
+        setUserToEdit(user);
+        setIsEditModalOpen(true);
+    };
+
+    const closeEditModal = () => {
+        setUserToEdit(null);
+        setIsEditModalOpen(false);
     };
 
     const handleSort = (column) => {
@@ -110,6 +123,7 @@ export default function Users({ theme, toggleTheme }) {
                         handleSort={handleSort}
                         openConfirmModal={openConfirmModal}
                         openEmailModal={openEmailModal} // Nouvelle prop pour ouvrir la modal d'email
+                        openEditModal={openEditModal}
                         theme={theme}
                     />
                     <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
@@ -131,6 +145,12 @@ export default function Users({ theme, toggleTheme }) {
                 isOpen={isEmailModalOpen}
                 onClose={() => setIsEmailModalOpen(false)}
                 recipientEmail={userToEmail ? userToEmail.email : ''}
+            />
+              <EditUserModal
+                isOpen={isEditModalOpen}
+                onClose={closeEditModal}
+                user={userToEdit}
+                fetchUsers={fetchUsers}
             />
 
         </div>

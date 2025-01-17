@@ -90,10 +90,11 @@ class UserController extends Controller
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:6',
-                'company_name' => 'required|string'
+                'company_name' => 'required|string',
+                'role' => 'required|in:recruteur,administrateur' // Validation du rôle
             ]
         );
-
+    
         if ($validateUser->fails()) {
             return response()->json([
                 'status' => false,
@@ -101,36 +102,101 @@ class UserController extends Controller
                 'errors' => $validateUser->errors()
             ], 401);
         }
-
+    
         try {
-            // Créer l'utilisateur avec un rôle recruteur
+            // Créer l'utilisateur
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => 'recruiter' // Assigner le rôle 'recruiter'
+                'role' => $request->role // Recruteur ou Administrateur
             ]);
-
-            // Créer l'enregistrement du recruteur associé
-            $recruiter = Recruiter::create([
-                'user_id' => $user->id,
-                'company_name' => $request->company_name,
-            ]);
-
+    
+            // Si recruteur, créer le lien avec une entreprise
+            if ($request->role === 'recruiter') {
+                $recruiter = Recruiter::create([
+                    'user_id' => $user->id,
+                    'company_name' => $request->company_name,
+                ]);
+            }
+    
             return response()->json([
                 'status' => true,
-                'message' => 'Recruteur créé avec succès',
+                'message' => 'Utilisateur créé avec succès',
                 'user' => $user,
-                'recruiter' => $recruiter
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Erreur lors de la création du recruteur',
+                'message' => 'Erreur lors de la création de l\'utilisateur',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
+
+
+    public function update(Request $request, $id)
+{
+    $validateUser = Validator::make(
+        $request->all(),
+        [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $id, // Vérifier l'unicité en ignorant l'utilisateur en cours
+            'password' => 'nullable|min:6', // Le mot de passe est optionnel pour la mise à jour
+            'company_name' => 'nullable|string',
+            'role' => 'required|in:recruteur,administrateur' // Validation du rôle
+        ]
+    );
+
+    if ($validateUser->fails()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Validation error',
+            'errors' => $validateUser->errors()
+        ], 401);
+    }
+
+    try {
+        $user = User::findOrFail($id);
+
+        // Mise à jour des informations utilisateur
+        $user->name = $request->name;
+        $user->email = $request->email;
+        if ($request->password) {
+            $user->password = Hash::make($request->password);
+        }
+        $user->role = $request->role;
+        $user->save();
+
+        // Mise à jour ou création des informations du recruteur
+        if ($user->role === 'recruteur') {
+            if ($user->recruiter) {
+                $user->recruiter->update([
+                    'company_name' => $request->company_name
+                ]);
+            } else {
+                Recruiter::create([
+                    'user_id' => $user->id,
+                    'company_name' => $request->company_name,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Utilisateur mis à jour avec succès',
+            'user' => $user,
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Erreur lors de la mise à jour de l\'utilisateur',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+    
 
 
     /**

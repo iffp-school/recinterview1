@@ -1,31 +1,29 @@
 import React, { useState } from 'react';
 import { axiosClient } from '../../api/axios';
 
-const AddRecruiterModal = ({ isOpen, onClose, fetchUsers }) => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+const EditUserModal = ({ isOpen, onClose, user, fetchUsers }) => {
+    const [name, setName] = useState(user?.name || '');
+    const [email, setEmail] = useState(user?.email || '');
     const [password, setPassword] = useState('');
-    const [companyName, setCompanyName] = useState('IFFP'); // Valeur par défaut
-    const [role, setRole] = useState('recruteur'); // Valeur par défaut
+    const [companyName, setCompanyName] = useState(user?.recruiter?.company_name || '');
+    const [role, setRole] = useState(user?.role || 'recruteur');
     const [loading, setLoading] = useState(false);
 
-    const handleAddRecruiter = async () => {
+    const handleUpdateUser = async () => {
         setLoading(true);
         try {
-            // Requête pour créer un utilisateur avec le rôle et l'entreprise
-            await axiosClient.post('/users', {
+            await axiosClient.put(`/users/${user.id}`, {
                 name,
                 email,
-                password,
-                role: role.toLowerCase(), // 'recruiter' ou 'admin'
-                company_name: companyName,
+                password: password || undefined, // Ne pas envoyer si vide
+                company_name: role === 'recruteur' ? companyName : null,
+                role,
             });
 
-            // Rafraîchir la liste des utilisateurs après l'ajout
-            fetchUsers();
-            onClose(); // Fermer la modal après l'ajout
+            fetchUsers(); // Rafraîchir les utilisateurs
+            onClose(); // Fermer la modal
         } catch (error) {
-            console.error("Erreur lors de l'ajout du recruteur", error);
+            console.error('Erreur lors de la mise à jour de l\'utilisateur', error);
         } finally {
             setLoading(false);
         }
@@ -39,7 +37,7 @@ const AddRecruiterModal = ({ isOpen, onClose, fetchUsers }) => {
                 <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onClick={onClose}>
                     X
                 </button>
-                <h2 className="text-xl font-bold mb-4 text-center">Ajouter un utilisateur</h2>
+                <h2 className="text-xl font-bold mb-4 text-center">Modifier l'utilisateur</h2>
                 <input
                     type="text"
                     className="mb-4 w-full p-2 border rounded"
@@ -57,19 +55,10 @@ const AddRecruiterModal = ({ isOpen, onClose, fetchUsers }) => {
                 <input
                     type="password"
                     className="mb-4 w-full p-2 border rounded"
-                    placeholder="Mot de passe"
+                    placeholder="Mot de passe (laisser vide pour ne pas changer)"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <select
-                    className="mb-4 w-full p-2 border rounded"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                >
-                    <option value="IFFP">IFFP</option>
-                    <option value="TechIT">TechIT</option>
-                    <option value="ISGI">ISGI</option>
-                </select>
                 <select
                     className="mb-4 w-full p-2 border rounded"
                     value={role}
@@ -78,16 +67,25 @@ const AddRecruiterModal = ({ isOpen, onClose, fetchUsers }) => {
                     <option value="recruteur">Recruteur</option>
                     <option value="administrateur">Administrateur</option>
                 </select>
+                {role === 'recruteur' && (
+                    <input
+                        type="text"
+                        className="mb-4 w-full p-2 border rounded"
+                        placeholder="Nom de l'entreprise"
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                    />
+                )}
                 <button
                     className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600"
-                    onClick={handleAddRecruiter}
+                    onClick={handleUpdateUser}
                     disabled={loading}
                 >
-                    {loading ? 'Ajout en cours...' : 'Ajouter'}
+                    {loading ? 'Mise à jour...' : 'Mettre à jour'}
                 </button>
             </div>
         </div>
     );
 };
 
-export default AddRecruiterModal;
+export default EditUserModal;

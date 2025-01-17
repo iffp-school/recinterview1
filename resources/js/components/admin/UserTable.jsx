@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { BsTrash, BsSend } from 'react-icons/bs';
+import { BsTrash, BsSend, BsPencilSquare } from 'react-icons/bs'; // Icône de modification
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa';
-import EmailModal from './EmailModal'; // Importation de la modal d'envoi d'email
+import EmailModal from './EmailModal';
 
-const UserTable = ({ users, sortBy, sortDirection, handleSort, openConfirmModal, theme }) => {
+const UserTable = ({ users, sortBy, sortDirection, handleSort, openConfirmModal, openEditModal, theme }) => {
     const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
     const [selectedUserEmail, setSelectedUserEmail] = useState('');
 
     const openEmailModal = (user) => {
-        setSelectedUserEmail(user.email); // Préremplir l'email de l'utilisateur sélectionné
+        setSelectedUserEmail(user.email);
         setIsEmailModalOpen(true);
     };
 
@@ -19,7 +19,6 @@ const UserTable = ({ users, sortBy, sortDirection, handleSort, openConfirmModal,
 
     return (
         <>
-            {/* Tableau pour les écrans larges */}
             <div className="hidden lg:block overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-blue-700">
@@ -47,13 +46,17 @@ const UserTable = ({ users, sortBy, sortDirection, handleSort, openConfirmModal,
                                 <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex space-x-2">
-                                        {/* Bouton pour supprimer l'utilisateur */}
+                                        {/* Bouton pour supprimer */}
                                         <button className="text-red-600 hover:text-red-900" onClick={() => openConfirmModal(user.id)}>
                                             <BsTrash />
                                         </button>
                                         {/* Bouton pour envoyer un email */}
                                         <button className="text-blue-600 hover:text-blue-900" onClick={() => openEmailModal(user)}>
                                             <BsSend />
+                                        </button>
+                                        {/* Bouton pour modifier */}
+                                        <button className="text-green-600 hover:text-green-900" onClick={() => openEditModal(user)}>
+                                            <BsPencilSquare />
                                         </button>
                                     </div>
                                 </td>
@@ -62,23 +65,6 @@ const UserTable = ({ users, sortBy, sortDirection, handleSort, openConfirmModal,
                     </tbody>
                 </table>
             </div>
-
-            {/* Vue pour mobile et tablette */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden p-4">
-                {users.map(user => (
-                    <div key={user.id} className={`bg-white shadow-md rounded-lg p-4 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-900'}`}>
-                        <h3 className="text-lg font-semibold mb-2">{user.name}</h3>
-                        <p className="text-sm text-gray-600 mb-1"><strong>Email:</strong> {user.email}</p>
-                        <p className="text-sm text-gray-600 mb-1"><strong>Rôle:</strong> {user.role}</p>
-                        <div className="flex justify-end mt-4">
-                            <button className="text-blue-600 hover:text-blue-900" onClick={() => openEmailModal(user)}>
-                                <BsSend />
-                            </button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
             {/* Modal d'envoi d'email */}
             <EmailModal
                 isOpen={isEmailModalOpen}
